@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Seite nicht gefunden - Entfalta</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <img src="/assets/icon.jpeg" alt="Entfalta" class="brand-mark">
+      <a class="brand" href="index.html">
+        <span>
+          <strong>Entfalta</strong>
+          <small>Admin-Panel</small>
+        </span>
+      </a>
+      <nav class="main-nav" aria-label="Hauptnavigation">
+        <a href="index.html">Shop</a>
+        <button class="user-button" id="accountButton" type="button" aria-label="Konto öffnen" title="Konto">
+          <span aria-hidden="true"></span>
+        </button>
+      </nav>
+    </header>
+
+    <main class="panel" style="width:min(720px,calc(100% - 32px));margin:80px auto;">
+      <h1>Seite nicht gefunden</h1>
+      <p>Diese Seite gibt es hier nicht oder sie ist nicht öffentlich.</p>
+      <a class="primary-link" href="/">Zurück zum Shop</a>
+    </main>
+    <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-storage-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

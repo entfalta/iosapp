@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Buchhaltung - Entfalta</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+  </head>
+  <body>
+    <header class="site-header">
+      <img src="/assets/icon.jpeg" alt="" class="brand-mark">
+      <a class="brand" href="admin.html">
+        <span>
+          <strong>Entfalta</strong>
+          <small>Buchhaltung</small>
+        </span>
+      </a>
+      <nav class="main-nav" aria-label="Hauptnavigation">
+        <a href="admin.html">Admin</a>
+        <a href="index.html">Shop</a>
+        <button class="user-button" id="accountButton" type="button" aria-label="Konto öffnen" title="Konto">
+          <span aria-hidden="true"></span>
+        </button>
+      </nav>
+    </header>
+
+    <main class="admin-main bookkeeping-page">
+      <article class="panel" id="bookkeepingLoginHint">
+        <h1>Buchhaltung</h1>
+        <p>Melde dich als Admin an, um Einnahmen, Ausgaben und automatische Einträge zu verwalten.</p>
+      </article>
+
+      <article class="panel admin-panel hidden" id="bookkeepingPanel">
+        <h1>Buchhaltung</h1>
+        <p class="muted">Diese Buchhaltung ist nur eine interne Übersicht. Sie verändert keine echten Kundenpreise und keine Stripe-Zahlungen.</p>
+
+        <form id="bookkeepingEntryForm" class="stacked-form" autocomplete="off">
+          <h2>Eintrag hinzufügen</h2>
+          <input name="name" placeholder="Name, z.B. Druckkosten oder Artikel verkauft" required>
+          <select name="kind" required>
+            <option value="income">Einnahme</option>
+            <option value="expense">Ausgabe</option>
+          </select>
+          <input name="amount" type="number" step="0.01" min="0" placeholder="Betrag in EUR" required>
+          <label>
+            Datum
+            <input name="entryDate" type="date">
+          </label>
+          <label class="checkbox-line">
+            <input name="applyAutoFees" type="checkbox" checked>
+            Automatische Gebühren auch von diesem Eintrag abziehen
+          </label>
+          <textarea name="note" placeholder="Notiz"></textarea>
+          <button type="submit">Eintrag speichern</button>
+        </form>
+
+        <form id="bookkeepingSettingsForm" class="stacked-form">
+          <h2>Automatische Einnahmen</h2>
+          <label class="checkbox-line">
+            <input name="autoEnabled" type="checkbox">
+            Automatische Einnahmen aktivieren
+          </label>
+          <input name="fixedFeePerItem" type="number" step="0.01" min="0" placeholder="Fixe Gebühr pro verkauftem Artikel, z.B. 0.25">
+          <input name="providerPercent" type="number" step="0.01" min="0" placeholder="Zahlungsanbieter-Gebühr in %, z.B. 1.5">
+          <p class="muted">Die Gebühren werden nur in der Buchhaltung abgezogen, nicht in der echten Kundenbestellung.</p>
+          <button type="submit">Einstellungen speichern</button>
+        </form>
+
+        <section class="admin-list" id="bookkeepingSummary"></section>
+
+        <div class="admin-actions">
+          <button type="button" id="exportBookkeepingCsv">Als Excel-Tabelle exportieren</button>
+          <button type="button" id="exportBookkeepingPdf">Als PDF drucken</button>
+        </div>
+
+        <details class="bookkeeping-list-wrap" open>
+          <summary>
+            <span>Einnahmen und Ausgaben</span>
+            <strong>Einträge</strong>
+          </summary>
+          <section class="admin-list" id="bookkeepingList"></section>
+        </details>
+      </article>
+    </main>
+
+    <div class="modal hidden" id="authModal" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+      <div class="modal-content auth-modal-content">
+        <button class="icon-button modal-close" id="closeAuth" type="button" aria-label="Konto schließen">X</button>
+        <div id="currentUserBox" class="current-user hidden"></div>
+        <form id="registerForm" class="stacked-form">
+          <h2 id="authTitle">Registrieren</h2>
+          <input name="name" autocomplete="name" placeholder="Name" required>
+          <input name="email" type="email" autocomplete="email" placeholder="E-Mail" required>
+          <input name="password" type="password" autocomplete="new-password" placeholder="Passwort" required>
+          <button type="submit">Konto erstellen</button>
+        </form>
+        <form id="loginForm" class="stacked-form">
+          <h2>Login</h2>
+          <input name="email" type="email" autocomplete="email" placeholder="E-Mail" required>
+          <input name="password" type="password" autocomplete="current-password" placeholder="Passwort" required>
+          <button type="submit">Einloggen</button>
+          <button class="google-button" id="googleLogin" type="button">Mit Google anmelden</button>
+        </form>
+      </div>
+    </div>
+
+    <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-storage-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

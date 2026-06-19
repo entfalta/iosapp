@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Zahlung erfolgreich - Entfalta</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="index.html">
+        <img src="assets/icon.jpeg" alt="" class="brand-mark">
+        <span>
+          <strong>Entfalta</strong>
+          <small>Zahlung erfolgreich</small>
+        </span>
+      </a>
+      <nav class="main-nav" aria-label="Hauptnavigation">
+        <a href="index.html">Shop</a>
+      </nav>
+    </header>
+    <main class="legal-document">
+      <article class="panel">
+        <h1>Zahlung erfolgreich</h1>
+        <p id="stripeSuccessStatus">Bestellung wird gespeichert...</p>
+        <section id="downloadLinks" class="download-list hidden" aria-live="polite"></section>
+      </article>
+    </main>
+    <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-storage-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800">
+  <rect width="800" height="800" fill="#fffaf0"/>
+  <path d="M0 150 C160 80 240 220 390 130 C520 52 650 160 800 92 V800 H0Z" fill="#3f6f45" opacity=".18"/>
+  <circle cx="400" cy="360" r="170" fill="#d77d32" opacity=".9"/>
+  <circle cx="400" cy="360" r="112" fill="#fffaf0" opacity=".95"/>
+  <path d="M295 522 C365 570 440 570 505 522" fill="none" stroke="#8a5637" stroke-width="28" stroke-linecap="round"/>
+  <text x="400" y="690" text-anchor="middle" font-size="54" font-family="Arial" fill="#2b241f" font-weight="700">Produkt</text>
+</svg>
