@@ -23,6 +23,7 @@ jobs:
 
       - name: Build iOS Application Archive
         run: |
+          # Build project if running in app/ios root or workspace root
           if [ -d "EntfaltaApp.xcodeproj" ]; then
             PROJECT_DIR="."
           elif [ -d "app/ios/EntfaltaApp.xcodeproj" ]; then
