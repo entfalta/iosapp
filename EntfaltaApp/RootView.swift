@@ -89,7 +89,7 @@ struct AppHeader: View {
         HStack(spacing: 15) {
             VStack(alignment: .leading, spacing: -2) {
                 Text("Entfalta App").font(EntfaltaTheme.segoe(28, bold: true))
-                Text("Entfalta").font(EntfaltaTheme.segoe(12)).foregroundStyle(EntfaltaTheme.textMuted)
+                Text("Entfalta").font(EntfaltaTheme.segoe(12)).foregroundColor(EntfaltaTheme.textMuted)
             }
             Spacer()
 
@@ -127,7 +127,7 @@ extension View {
             .padding(.vertical, 8)
             .background(Color.white.opacity(0.1), in: Capsule())
             .overlay(Capsule().stroke(Color.white.opacity(0.2), lineWidth: 1))
-            .foregroundStyle(.white)
+            .foregroundColor(.white)
     }
 }
 
@@ -148,7 +148,7 @@ struct AdminNavBar: View {
                         ForEach(rows[rowIndex], id: \.self) { title in
                             Button(title) { state.selectedSection = title }
                                 .font(EntfaltaTheme.segoe(14, bold: state.selectedSection == title))
-                                .foregroundStyle(state.selectedSection == title ? EntfaltaTheme.leaf : .white)
+                                .foregroundColor(state.selectedSection == title ? EntfaltaTheme.leaf : .white)
                                 .overlay(alignment: .bottom) {
                                     if state.selectedSection == title {
                                         Rectangle().fill(EntfaltaTheme.leaf).frame(height: 1).offset(y: 4)
@@ -178,7 +178,7 @@ struct CustomerNavBar: View {
                 ForEach(sections, id: \.self) { title in
                     Button(title) { state.selectedSection = title }
                         .font(EntfaltaTheme.segoe(14, bold: state.selectedSection == title))
-                        .foregroundStyle(state.selectedSection == title ? EntfaltaTheme.leaf : .white)
+                        .foregroundColor(state.selectedSection == title ? EntfaltaTheme.leaf : .white)
                 }
             }
             .padding(.horizontal, 25)

@@ -54,7 +54,7 @@ extension View {
     func primaryButtonStyle() -> some View {
         self
             .font(EntfaltaTheme.segoe(16, bold: true))
-            .foregroundStyle(.white)
+            .foregroundColor(.white)
             .padding(.horizontal, 22)
             .padding(.vertical, 12)
             .background(EntfaltaTheme.buttonGradient, in: Capsule())
@@ -70,9 +70,9 @@ struct EntfaltaTextField: View {
     var body: some View {
         Group {
             if isSecure {
-                SecureField("", text: $text, prompt: Text(placeholder).foregroundStyle(EntfaltaTheme.textMuted))
+                SecureField("", text: $text, prompt: Text(placeholder).foregroundColor(EntfaltaTheme.textMuted))
             } else {
-                TextField("", text: $text, prompt: Text(placeholder).foregroundStyle(EntfaltaTheme.textMuted))
+                TextField("", text: $text, prompt: Text(placeholder).foregroundColor(EntfaltaTheme.textMuted))
                     .keyboardType(keyboardType)
                     .autocapitalization(.none)
             }

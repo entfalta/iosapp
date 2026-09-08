@@ -58,7 +58,7 @@ struct ProfileBtn: View {
                 .frame(maxWidth: .infinity, minHeight: 60)
                 .background(EntfaltaTheme.leaf.opacity(0.3), in: Capsule())
                 .overlay(Capsule().stroke(Color.white.opacity(0.1), lineWidth: 1))
-                .foregroundStyle(.white)
+                .foregroundColor(.white)
         }
     }
 }
@@ -84,7 +84,7 @@ struct AdminKontoSettings: View {
                     Text("Profil").font(EntfaltaTheme.segoe(18, bold: true))
                     VStack(alignment: .leading, spacing: 10) {
                         Text("Profilbild").font(.headline)
-                        Text("Admins nutzen in der App immer das Entfalta-Logo oben rechts.").font(.caption).foregroundStyle(EntfaltaTheme.textMuted)
+                        Text("Admins nutzen in der App immer das Entfalta-Logo oben rechts.").font(.caption).foregroundColor(EntfaltaTheme.textMuted)
                         EntfaltaTextField(placeholder: "Name", text: $name)
                         EntfaltaTextField(placeholder: "Email", text: $email)
                     }

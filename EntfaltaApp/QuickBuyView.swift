@@ -35,10 +35,10 @@ struct QuickBuyView: View {
             }.entfaltaCard().frame(maxWidth: .infinity, alignment: .leading)
 
             HStack(spacing: 20) {
-                Text("Zahlung öffnet Stripe Checkout.").font(.caption).foregroundStyle(EntfaltaTheme.textMuted)
+                Text("Zahlung öffnet Stripe Checkout.").font(.caption).foregroundColor(EntfaltaTheme.textMuted)
                 Spacer()
-                Button("Leeren") {}.headerButtonStyle().foregroundStyle(.white).background(EntfaltaTheme.leaf.opacity(0.4), in: Capsule())
-                Button("Mit Stripe zahlen") {}.headerButtonStyle().foregroundStyle(.white).background(EntfaltaTheme.leaf.opacity(0.6), in: Capsule())
+                Button("Leeren") {}.headerButtonStyle().foregroundColor(.white).background(EntfaltaTheme.leaf.opacity(0.4), in: Capsule())
+                Button("Mit Stripe zahlen") {}.headerButtonStyle().foregroundColor(.white).background(EntfaltaTheme.leaf.opacity(0.6), in: Capsule())
             }
         }
     }

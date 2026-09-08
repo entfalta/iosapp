@@ -29,4 +29,6 @@ app/
 *.toml
 _headers
 _redirects
+.tmp_logs*
+
 

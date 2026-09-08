@@ -22,7 +22,7 @@ struct StatisticsView: View {
 
             Text("Archiv: \(state.orders.filter{$0.archived}.count) | Artikel: \(state.products.count) | Verkauft gesamt: 0 | Download/Print: 0/0")
                 .font(EntfaltaTheme.segoe(13))
-                .foregroundStyle(EntfaltaTheme.textMuted)
+                .foregroundColor(EntfaltaTheme.textMuted)
                 .frame(maxWidth: .infinity, alignment: .center)
 
             VStack(alignment: .leading, spacing: 15) {
@@ -30,7 +30,7 @@ struct StatisticsView: View {
                 HStack(spacing: 15) {
                     RoundedRectangle(cornerRadius: 15).fill(EntfaltaTheme.leaf.opacity(0.2))
                         .frame(width: 80, height: 100)
-                        .overlay(Text("Entfalta").font(.caption2).foregroundStyle(EntfaltaTheme.leaf))
+                        .overlay(Text("Entfalta").font(.caption2).foregroundColor(EntfaltaTheme.leaf))
                     VStack(alignment: .leading) {
                         Text("Titel: Noch nichts verkauft").bold()
                         Text("Verkauft: 0").font(.caption)
@@ -42,9 +42,9 @@ struct StatisticsView: View {
 
     private func statTile(label: String, value: String, hint: String) -> some View {
         VStack(spacing: 4) {
-            Text(label).font(EntfaltaTheme.segoe(12)).foregroundStyle(EntfaltaTheme.textMuted)
-            Text(value).font(EntfaltaTheme.segoe(24, bold: true)).foregroundStyle(.white)
-            Text(hint).font(EntfaltaTheme.segoe(10)).foregroundStyle(EntfaltaTheme.textMuted)
+            Text(label).font(EntfaltaTheme.segoe(12)).foregroundColor(EntfaltaTheme.textMuted)
+            Text(value).font(EntfaltaTheme.segoe(24, bold: true)).foregroundColor(.white)
+            Text(hint).font(EntfaltaTheme.segoe(10)).foregroundColor(EntfaltaTheme.textMuted)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 15)
@@ -69,14 +69,14 @@ struct AdminSupportContributionsView: View {
                         VStack(alignment: .leading, spacing: 6) {
                             Text(contribution.name)
                                 .font(EntfaltaTheme.segoe(18, bold: true))
-                                .foregroundStyle(EntfaltaTheme.leaf)
+                                .foregroundColor(EntfaltaTheme.leaf)
 
                             HStack {
                                 Text("Betrag: \(money(contribution.amount))")
                                 Spacer()
                                 Text(formatDate(contribution.createdAtMs))
                                     .font(.caption)
-                                    .foregroundStyle(EntfaltaTheme.textMuted)
+                                    .foregroundColor(EntfaltaTheme.textMuted)
                             }
                         }.entfaltaCard(padding: 15)
                     }
@@ -139,7 +139,7 @@ struct AdminGiftVoucherView: View {
                                 VStack(alignment: .leading) {
                                     Text(voucher.code).bold()
                                     Text("\(money(voucher.remainingAmount)) / \(money(voucher.amount))").font(.caption)
-                                    Text("Status: \(voucher.status)").font(.system(size: 10)).foregroundStyle(voucher.status == "disabled" ? .red : .green)
+                                    Text("Status: \(voucher.status)").font(.system(size: 10)).foregroundColor(voucher.status == "disabled" ? .red : .green)
                                 }
                                 Spacer()
                                 Button(voucher.status == "disabled" ? "Aktivieren" : "Sperren") {
@@ -157,7 +157,7 @@ struct AdminGiftVoucherView: View {
 
                                 Button("Löschen") {
                                     Task { await state.deleteVoucher(voucher) }
-                                }.font(.caption).foregroundStyle(.red).padding(6).background(Color.white.opacity(0.1), in: RoundedRectangle(cornerRadius: 8))
+                                }.font(.caption).foregroundColor(.red).padding(6).background(Color.white.opacity(0.1), in: RoundedRectangle(cornerRadius: 8))
                             }
                         }.entfaltaCard(padding: 12)
                     }
@@ -183,7 +183,7 @@ struct AdminGiftVoucherView: View {
             .frame(maxWidth: .infinity)
             .padding(.vertical, 12)
             .background(active ? EntfaltaTheme.buttonGradient : LinearGradient(colors: [.clear], startPoint: .top, endPoint: .bottom), in: Capsule())
-            .foregroundStyle(.white)
+            .foregroundColor(.white)
     }
 }
 
@@ -256,7 +256,7 @@ struct ISBNView: View {
                                 if !item.title.isEmpty { Text(item.title).font(.caption) }
                             }
                             Spacer()
-                            Text(item.used ? "Benutzt" : "Frei").font(.caption).foregroundStyle(item.used ? .red : .green)
+                            Text(item.used ? "Benutzt" : "Frei").font(.caption).foregroundColor(item.used ? .red : .green)
                         }.entfaltaCard(padding: 12)
                     }
                 }
@@ -289,7 +289,7 @@ struct AdminProductsView: View {
                         HStack {
                             VStack(alignment: .leading) {
                                 Text(product.title).bold()
-                                Text(money(product.price)).font(.caption).foregroundStyle(EntfaltaTheme.leaf)
+                                Text(money(product.price)).font(.caption).foregroundColor(EntfaltaTheme.leaf)
                             }
                             Spacer()
                             Button("Edit") {
@@ -320,7 +320,7 @@ struct DeliveryView: View {
             Text("Lieferung").font(EntfaltaTheme.segoe(32, bold: true))
 
             VStack(spacing: 12) {
-                Text("Diese Lieferdienste können Kunden im Checkout auswählen.").font(EntfaltaTheme.segoe(14)).foregroundStyle(EntfaltaTheme.textMuted)
+                Text("Diese Lieferdienste können Kunden im Checkout auswählen.").font(EntfaltaTheme.segoe(14)).foregroundColor(EntfaltaTheme.textMuted)
                 EntfaltaTextField(placeholder: "Lieferdienst, z.B. Hermes", text: $name)
                 EntfaltaTextField(placeholder: "Versandpreis", text: $price)
                 EntfaltaTextField(placeholder: "Sendcloud Method ID (Versand)", text: $scV)
@@ -339,7 +339,7 @@ struct ReturnRequestsView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 15) {
             Text("Rücksendungen").font(EntfaltaTheme.segoe(32, bold: true))
-            Text("Hier siehst du alle beantragten Rücksendungen von Kunden.").font(.caption).foregroundStyle(EntfaltaTheme.textMuted)
+            Text("Hier siehst du alle beantragten Rücksendungen von Kunden.").font(.caption).foregroundColor(EntfaltaTheme.textMuted)
 
             Text("Keine offenen Rücksendungen.").padding().frame(maxWidth: .infinity, alignment: .center)
         }
@@ -357,13 +357,13 @@ struct LagerView: View {
                     HStack {
                         VStack(alignment: .leading, spacing: 4) {
                             Text(product.title).font(EntfaltaTheme.segoe(16, bold: true))
-                            Text(product.itemType.uppercased()).font(.system(size: 10, weight: .bold)).foregroundStyle(.secondary)
+                            Text(product.itemType.uppercased()).font(.system(size: 10, weight: .bold)).foregroundColor(.secondary)
                         }
                         Spacer()
                         VStack(alignment: .trailing, spacing: 2) {
                             Text("\(product.stock)")
                                 .font(EntfaltaTheme.segoe(22, bold: true))
-                                .foregroundStyle(product.stock > 5 ? EntfaltaTheme.leaf : EntfaltaTheme.clay)
+                                .foregroundColor(product.stock > 5 ? EntfaltaTheme.leaf : EntfaltaTheme.clay)
                             Text("Stück auf Lager").font(.system(size: 10))
                         }
                     }
