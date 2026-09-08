@@ -1,5 +1,40 @@
 import SwiftUI
 
+struct ProductImage: View {
+    let source: String
+    var body: some View {
+        Group {
+            if source.hasPrefix("http://") || source.hasPrefix("https://") {
+                AsyncImage(url: URL(string: source)) { phase in
+                    switch phase {
+                    case .success(let img):
+                        img.resizable().scaledToFill()
+                    case .failure:
+                        placeholder
+                    case .empty:
+                        ProgressView()
+                    @unknown default:
+                        placeholder
+                    }
+                }
+            } else if !source.isEmpty, let uiImage = UIImage(contentsOfFile: source) {
+                Image(uiImage: uiImage).resizable().scaledToFill()
+            } else {
+                placeholder
+            }
+        }
+    }
+
+    private var placeholder: some View {
+        ZStack {
+            EntfaltaTheme.leaf.opacity(0.2)
+            Text("Entfalta")
+                .font(EntfaltaTheme.segoe(18, bold: true))
+                .foregroundStyle(EntfaltaTheme.leaf)
+        }
+    }
+}
+
 struct WatercolorBackground: View {
     var body: some View {
         ZStack {
@@ -192,66 +227,6 @@ struct LoginView: View {
     }
 }
 
-struct NewsletterView: View {
-    @EnvironmentObject private var state: AppState
-    @State private var title = ""
-    @State private var text = ""
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
-            Text("Newsletter").font(EntfaltaTheme.segoe(32, bold: true))
-
-            if state.isAdmin {
-                VStack(spacing: 12) {
-                    Text("Neuen Beitrag veröffentlichen").font(EntfaltaTheme.segoe(16, bold: true))
-                    EntfaltaTextField(placeholder: "Titel", text: $title)
-                    TextEditor(text: $text)
-                        .frame(height: 100)
-                        .padding(8)
-                        .background(Color.white.opacity(0.05))
-                        .cornerRadius(12)
-                    Button("Veröffentlichen") {
-                        Task {
-                            try? await FirebaseRest.shared.set(
-                                collection: "newsletterPosts",
-                                id: UUID().uuidString,
-                                values: [
-                                    "title": title,
-                                    "text": text,
-                                    "createdAtMs": Date().timeIntervalSince1970 * 1000,
-                                    "hidden": false
-                                ],
-                                token: state.session?.idToken ?? ""
-                            )
-                            title = ""
-                            text = ""
-                            await state.loadNewsletter()
-                        }
-                    }
-                    .primaryButtonStyle()
-                }
-                .entfaltaCard()
-            }
-
-            if state.newsletterPosts.isEmpty {
-                Text("Keine Newsletter-Beiträge vorhanden.")
-                    .padding()
-                    .frame(maxWidth: .infinity, alignment: .center)
-            } else {
-                ForEach(state.newsletterPosts) { post in
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text(post.title).font(EntfaltaTheme.segoe(20, bold: true))
-                        Text(post.text).font(EntfaltaTheme.segoe(14))
-                        Text(dateString(post.createdAtMs)).font(.caption).foregroundStyle(EntfaltaTheme.textMuted)
-                    }
-                    .entfaltaCard()
-                }
-            }
-        }
-        .refreshable { await state.loadNewsletter() }
-    }
-}
-
 struct CustomerGiftVoucherView: View {
     @EnvironmentObject private var state: AppState
     @State private var checkCode = ""
@@ -343,22 +318,3 @@ struct OfflineEbooksView: View {
         }
     }
 }
-
-struct LoginCodeSettingsView: View {
-    @State private var code = ""
-    var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
-            Text("Login-Code").font(EntfaltaTheme.segoe(32, bold: true))
-            Text("Sicherheitscode für den Schnellzugriff festlegen.")
-                .font(EntfaltaTheme.segoe(14))
-                .foregroundStyle(EntfaltaTheme.textMuted)
-
-            VStack(spacing: 12) {
-                EntfaltaTextField(placeholder: "Code (z.B. 1234)", text: $code)
-                Button("Code speichern") {}.primaryButtonStyle()
-            }
-            .entfaltaCard()
-        }
-    }
-}
-
