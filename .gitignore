@@ -12,3 +12,21 @@ android/app/build/
 app/android/app/build/
 app/ios/build/
 app/ios/DerivedData/
+
+# Ignore non-iOS web files & directories
+Web/
+backend/
+covers/
+pdf/
+previewsite/
+Product/
+newsbild/
+assets/
+app/
+*.html
+*.js
+*.css
+*.toml
+_headers
+_redirects
+
