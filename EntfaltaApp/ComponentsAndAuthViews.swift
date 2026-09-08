@@ -30,7 +30,7 @@ struct ProductImage: View {
             EntfaltaTheme.leaf.opacity(0.2)
             Text("Entfalta")
                 .font(EntfaltaTheme.segoe(18, bold: true))
-                .foregroundStyle(EntfaltaTheme.leaf)
+                .foregroundColor(EntfaltaTheme.leaf)
         }
     }
 }
@@ -87,7 +87,7 @@ struct BundleLogo: View {
                     Circle().fill(EntfaltaTheme.leaf)
                     Text("E")
                         .font(EntfaltaTheme.segoe(size * 0.5, bold: true))
-                        .foregroundStyle(.white)
+                        .foregroundColor(.white)
                 }
             }
         }
@@ -109,7 +109,7 @@ struct CookieGate: View {
                 Text("Wir nutzen Cookies für notwendige Shop-Funktionen und zur Verbesserung deines Erlebnisses.")
                     .font(EntfaltaTheme.segoe(14))
                     .multilineTextAlignment(.center)
-                    .foregroundStyle(EntfaltaTheme.textMuted)
+                    .foregroundColor(EntfaltaTheme.textMuted)
 
                 HStack(spacing: 15) {
                     Button("Akzeptieren") {
@@ -142,7 +142,7 @@ struct LoadingOverlay: View {
                     .scaleEffect(1.3)
                 Text("Laden...")
                     .font(EntfaltaTheme.segoe(15, bold: true))
-                    .foregroundStyle(.white)
+                    .foregroundColor(.white)
             }
             .padding(25)
             .background(EntfaltaTheme.forestGreen.opacity(0.9))
@@ -170,7 +170,7 @@ struct LoginView: View {
                         .font(EntfaltaTheme.segoe(26, bold: true))
                     Text(isRegister ? "Registriere dich für den Shop & App" : "Melde dich mit deinen Zugangsdaten an")
                         .font(EntfaltaTheme.segoe(14))
-                        .foregroundStyle(EntfaltaTheme.textMuted)
+                        .foregroundColor(EntfaltaTheme.textMuted)
                 }
 
                 VStack(spacing: 15) {
@@ -178,17 +178,8 @@ struct LoginView: View {
                         EntfaltaTextField(placeholder: "Vollständiger Name", text: $name)
                     }
 
-                    EntfaltaTextField(placeholder: "E-Mail Adresse", text: $email)
-                        .autocapitalization(.none)
-                        .keyboardType(.emailAddress)
-
-                    SecureField("", text: $password, prompt: Text("Passwort").foregroundStyle(EntfaltaTheme.textMuted))
-                        .font(EntfaltaTheme.segoe(15))
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 14)
-                        .background(EntfaltaTheme.forestGreen.opacity(0.5))
-                        .clipShape(Capsule())
-                        .overlay(Capsule().stroke(EntfaltaTheme.cardBorder, lineWidth: 1))
+                    EntfaltaTextField(placeholder: "E-Mail Adresse", text: $email, keyboardType: .emailAddress)
+                    EntfaltaTextField(placeholder: "Passwort", text: $password, isSecure: true)
 
                     Button(isRegister ? "Registrieren" : "Anmelden") {
                         Task {
@@ -209,7 +200,7 @@ struct LoginView: View {
                         withAnimation { isRegister.toggle() }
                     }
                     .font(EntfaltaTheme.segoe(13))
-                    .foregroundStyle(EntfaltaTheme.leaf)
+                    .foregroundColor(EntfaltaTheme.leaf)
 
                     Spacer()
 
@@ -217,7 +208,7 @@ struct LoginView: View {
                         state.enterGuestGames()
                     }
                     .font(EntfaltaTheme.segoe(13))
-                    .foregroundStyle(EntfaltaTheme.textMuted)
+                    .foregroundColor(EntfaltaTheme.textMuted)
                 }
                 .padding(.horizontal, 10)
             }
@@ -251,7 +242,7 @@ struct CustomerGiftVoucherView: View {
                 if !checkResult.isEmpty {
                     Text(checkResult)
                         .font(EntfaltaTheme.segoe(16, bold: true))
-                        .foregroundStyle(EntfaltaTheme.leaf)
+                        .foregroundColor(EntfaltaTheme.leaf)
                 }
             }
             .entfaltaCard()
@@ -266,7 +257,7 @@ struct WishlistView: View {
             Text("Merkliste").font(EntfaltaTheme.segoe(32, bold: true))
             Text("Hier werden deine gemerkten Artikel gespeichert.")
                 .font(EntfaltaTheme.segoe(14))
-                .foregroundStyle(EntfaltaTheme.textMuted)
+                .foregroundColor(EntfaltaTheme.textMuted)
             Text("Keine Artikel auf der Merkliste.")
                 .padding()
                 .frame(maxWidth: .infinity, alignment: .center)
@@ -290,12 +281,12 @@ struct MyPurchasesView: View {
                         HStack {
                             Text(order.orderNumber).font(EntfaltaTheme.segoe(18, bold: true))
                             Spacer()
-                            Text(money(order.total)).bold().foregroundStyle(EntfaltaTheme.clay)
+                            Text(money(order.total)).bold().foregroundColor(EntfaltaTheme.clay)
                         }
-                        Text(dateString(order.createdAtMs)).font(.caption).foregroundStyle(EntfaltaTheme.textMuted)
+                        Text(dateString(order.createdAtMs)).font(.caption).foregroundColor(EntfaltaTheme.textMuted)
                         Text("Status: \(order.status)")
                             .font(.caption)
-                            .foregroundStyle(EntfaltaTheme.leaf)
+                            .foregroundColor(EntfaltaTheme.leaf)
                     }
                     .entfaltaCard()
                 }
@@ -311,7 +302,7 @@ struct OfflineEbooksView: View {
             Text("Offline E-Books").font(EntfaltaTheme.segoe(32, bold: true))
             Text("Heruntergeladene E-Books stehen hier ohne Internetverbindung zur Verfügung.")
                 .font(EntfaltaTheme.segoe(14))
-                .foregroundStyle(EntfaltaTheme.textMuted)
+                .foregroundColor(EntfaltaTheme.textMuted)
             Text("Keine Offline-E-Books vorhanden.")
                 .padding()
                 .frame(maxWidth: .infinity, alignment: .center)

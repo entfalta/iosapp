@@ -58,7 +58,7 @@ struct ProfileBtn: View {
                 .frame(maxWidth: .infinity, minHeight: 60)
                 .background(EntfaltaTheme.leaf.opacity(0.3), in: Capsule())
                 .overlay(Capsule().stroke(Color.white.opacity(0.1), lineWidth: 1))
-                .foregroundStyle(.white)
+                .foregroundColor(.white)
         }
     }
 }
@@ -76,7 +76,7 @@ struct AdminKontoSettings: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 25) {
                 HStack {
-                    Button(action: onBack) { Image(systemName: "chevron.left").bold() }
+                    Button(action: onBack) { Image(systemName: "chevron.left").font(.system(size: 16, weight: .bold)) }
                     Text("Admin-Konto").font(EntfaltaTheme.segoe(32, bold: true))
                 }
 
@@ -84,7 +84,7 @@ struct AdminKontoSettings: View {
                     Text("Profil").font(EntfaltaTheme.segoe(18, bold: true))
                     VStack(alignment: .leading, spacing: 10) {
                         Text("Profilbild").font(.headline)
-                        Text("Admins nutzen in der App immer das Entfalta-Logo oben rechts.").font(.caption).foregroundStyle(EntfaltaTheme.textMuted)
+                        Text("Admins nutzen in der App immer das Entfalta-Logo oben rechts.").font(.caption).foregroundColor(EntfaltaTheme.textMuted)
                         EntfaltaTextField(placeholder: "Name", text: $name)
                         EntfaltaTextField(placeholder: "Email", text: $email)
                     }

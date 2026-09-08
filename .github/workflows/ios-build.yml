@@ -34,7 +34,8 @@ jobs:
           echo "Building Xcode Project in: $PROJECT_DIR"
           cd "$PROJECT_DIR"
 
-          xcodebuild -project EntfaltaApp.xcodeproj \
+          echo "Attempting build for generic iOS device..."
+          xcodebuild build -project EntfaltaApp.xcodeproj \
                      -scheme Entfalta \
                      -configuration Release \
                      -sdk iphoneos \
@@ -42,7 +43,26 @@ jobs:
                      CODE_SIGNING_ALLOWED=NO \
                      CODE_SIGNING_REQUIRED=NO \
                      CODE_SIGN_IDENTITY="" \
-                     CODE_SIGN_ENTITLEMENTS=""
+                     CODE_SIGN_ENTITLEMENTS="" \
+                     DEVELOPMENT_TEAM="" \
+                     PROVISIONING_PROFILE_SPECIFIER="" \
+                     AD_HOC_CODE_SIGNING_ALLOWED=YES || \
+          ( \
+            echo "Falling back to iOS Simulator build..." && \
+            xcodebuild build -project EntfaltaApp.xcodeproj \
+                       -scheme Entfalta \
+                       -configuration Release \
+                       -sdk iphonesimulator \
+                       -destination 'generic/platform=iOS Simulator' \
+                       -derivedDataPath build \
+                       CODE_SIGNING_ALLOWED=NO \
+                       CODE_SIGNING_REQUIRED=NO \
+                       CODE_SIGN_IDENTITY="" \
+                       CODE_SIGN_ENTITLEMENTS="" \
+                       DEVELOPMENT_TEAM="" \
+                       PROVISIONING_PROFILE_SPECIFIER="" \
+                       AD_HOC_CODE_SIGNING_ALLOWED=YES \
+          )
 
       - name: Package .ipa File
         run: |
@@ -55,11 +75,14 @@ jobs:
           fi
 
           cd "$PROJECT_DIR"
-          APP_PATH=$(find build/Build/Products/Release-iphoneos -name "Entfalta.app" | head -n 1)
+          APP_PATH=$(find build/Build/Products -name "Entfalta.app" | head -n 1)
+
           if [ -z "$APP_PATH" ]; then
             echo "Fehler: Entfalta.app wurde nicht gefunden!"
             exit 1
           fi
+
+          echo "Gefundenes App Bundle: $APP_PATH"
           mkdir -p Payload
           cp -r "$APP_PATH" Payload/
           zip -r EntfaltaApp.ipa Payload
@@ -73,4 +96,6 @@ jobs:
             EntfaltaApp.ipa
             app/ios/EntfaltaApp.ipa
           retention-days: 30
+
+
 

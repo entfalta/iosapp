@@ -35,10 +35,10 @@ struct ProductCard: View {
                 .rotationEffect(.degrees(Double.random(in: -2...2)))
 
             Text(product.title).font(EntfaltaTheme.segoe(18, bold: true)).lineLimit(2)
-            Text(product.description).font(.system(size: 12)).foregroundStyle(.secondary).lineLimit(2)
+            Text(product.description).font(.system(size: 12)).foregroundColor(.secondary).lineLimit(2)
 
             HStack {
-                Text(priceText).font(EntfaltaTheme.segoe(15, bold: true)).foregroundStyle(EntfaltaTheme.leaf)
+                Text(priceText).font(EntfaltaTheme.segoe(15, bold: true)).foregroundColor(EntfaltaTheme.leaf)
                 Spacer()
                 availabilityBadge
             }
@@ -60,7 +60,7 @@ struct ProductCard: View {
                         .labelsHidden()
                     Button("Hinzufügen") {
                         state.addToCart(product, format: "print", quantity: quickQuantity, variant: selectedVariantName)
-                    }.font(.caption.bold())
+                    }.font(.caption).bold()
                 }
                 .padding(.top, 4)
             }
@@ -88,7 +88,7 @@ struct ProductCard: View {
             .padding(.horizontal, 6)
             .padding(.vertical, 2)
             .background(available ? EntfaltaTheme.leaf.opacity(0.2) : .red.opacity(0.1), in: Capsule())
-            .foregroundStyle(available ? EntfaltaTheme.leaf : .red)
+            .foregroundColor(available ? EntfaltaTheme.leaf : .red)
     }
 }
 
@@ -100,7 +100,7 @@ struct ProductDetail: View {
     @State private var selectedVariantName: String?
 
     var body: some View {
-        NavigationStack {
+        NavigationView {
             ScrollView {
                 VStack(alignment: .leading, spacing: 22) {
                     ProductImage(source: product.cover)
@@ -112,7 +112,7 @@ struct ProductDetail: View {
                     Text(product.title).font(EntfaltaTheme.segoe(32, bold: true))
 
                     if let isbn = product.isbn {
-                        Text("ISBN: \(isbn)").font(.caption.monospaced()).foregroundStyle(.secondary)
+                        Text("ISBN: \(isbn)").font(.caption.monospaced()).foregroundColor(.secondary)
                     }
 
                     Text(product.description).font(EntfaltaTheme.segoe(16))
@@ -134,7 +134,7 @@ struct ProductDetail: View {
                                 HStack {
                                     Text("Gedruckte Ausgabe").font(EntfaltaTheme.segoe(15, bold: true))
                                     Spacer()
-                                    Text(money(product.printPrice)).font(EntfaltaTheme.segoe(17, bold: true)).foregroundStyle(EntfaltaTheme.clay)
+                                    Text(money(product.printPrice)).font(EntfaltaTheme.segoe(17, bold: true)).foregroundColor(EntfaltaTheme.clay)
                                 }
 
                                 if let variants = product.variants, !variants.isEmpty {
@@ -189,7 +189,7 @@ struct CartSheet: View {
     }
 
     var body: some View {
-        NavigationStack {
+        NavigationView {
             VStack(spacing: 0) {
                 List {
                     Section {
@@ -197,7 +197,7 @@ struct CartSheet: View {
                             HStack {
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text(item.product.title).font(EntfaltaTheme.segoe(15, bold: true))
-                                    Text(item.format == "download" ? "📥 Download" : "📦 Gedruckt x\(item.quantity)").font(.caption).foregroundStyle(.secondary)
+                                    Text(item.format == "download" ? "📥 Download" : "📦 Gedruckt x\(item.quantity)").font(.caption).foregroundColor(.secondary)
                                 }
                                 Spacer()
                                 Text(money(Double(item.quantity) * item.unitPrice)).bold()
@@ -209,15 +209,15 @@ struct CartSheet: View {
                         HStack {
                             Text("Versandkosten")
                             Spacer()
-                            Text(isDownloadOnly ? "0.00 EUR" : "Wird berechnet").bold().foregroundStyle(isDownloadOnly ? EntfaltaTheme.leaf : .primary)
+                            Text(isDownloadOnly ? "0.00 EUR" : "Wird berechnet").bold().foregroundColor(isDownloadOnly ? EntfaltaTheme.leaf : .primary)
                         }
                         if isDownloadOnly {
-                            Text("Gratis Versand für rein digitale Bestellungen!").font(.caption).foregroundStyle(EntfaltaTheme.leaf)
+                            Text("Gratis Versand für rein digitale Bestellungen!").font(.caption).foregroundColor(EntfaltaTheme.leaf)
                         }
                         HStack {
                             Text("Gesamtsumme").font(.headline)
                             Spacer()
-                            Text(money(state.cartTotal)).font(EntfaltaTheme.segoe(20, bold: true)).foregroundStyle(EntfaltaTheme.clay)
+                            Text(money(state.cartTotal)).font(EntfaltaTheme.segoe(20, bold: true)).foregroundColor(EntfaltaTheme.clay)
                         }
                     } header: { Text("Zusammenfassung") }
 
@@ -282,7 +282,7 @@ struct NewsletterView: View {
                         }
                         Text(post.title).font(EntfaltaTheme.segoe(22, bold: true))
                         Text(post.text).font(EntfaltaTheme.segoe(15))
-                        Text(dateString(post.createdAtMs)).font(.caption2).foregroundStyle(.secondary)
+                        Text(dateString(post.createdAtMs)).font(.caption2).foregroundColor(.secondary)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .entfaltaCard()

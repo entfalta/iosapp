@@ -44,7 +44,7 @@ struct AdminDownloadsView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             Text("Download-Bestellungen").font(EntfaltaTheme.segoe(32, bold: true))
-            Text("Hier siehst du alle Bestellungen, die nur Download-Artikel enthalten.").font(.caption).foregroundStyle(EntfaltaTheme.textMuted)
+            Text("Hier siehst du alle Bestellungen, die nur Download-Artikel enthalten.").font(.caption).foregroundColor(EntfaltaTheme.textMuted)
 
             if filteredOrders.isEmpty {
                 Text("Keine Download-Bestellungen gefunden.")
@@ -73,8 +73,8 @@ struct AdminOrderCard: View {
                 }
                 Spacer()
                 VStack(alignment: .trailing, spacing: 4) {
-                    Text(money(order.total)).font(EntfaltaTheme.segoe(18, bold: true)).foregroundStyle(EntfaltaTheme.clay)
-                    Text(dateString(order.createdAtMs)).font(.caption).foregroundStyle(EntfaltaTheme.textMuted)
+                    Text(money(order.total)).font(EntfaltaTheme.segoe(18, bold: true)).foregroundColor(EntfaltaTheme.clay)
+                    Text(dateString(order.createdAtMs)).font(.caption).foregroundColor(EntfaltaTheme.textMuted)
                 }
             }
 
@@ -96,14 +96,14 @@ struct AdminOrderCard: View {
                                     .font(EntfaltaTheme.segoe(14, bold: true))
                                     .padding(6)
                                     .background(EntfaltaTheme.leaf.opacity(0.1))
-                                    .foregroundStyle(EntfaltaTheme.leaf)
+                                    .foregroundColor(EntfaltaTheme.leaf)
                                     .clipShape(RoundedRectangle(cornerRadius: 8))
 
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text(item["title"] as? String ?? "Artikel").bold()
                                     Text("\(money(price)) | \(item["fulfillment"] as? String ?? "Standard")")
                                         .font(.system(size: 10))
-                                        .foregroundStyle(EntfaltaTheme.textMuted)
+                                        .foregroundColor(EntfaltaTheme.textMuted)
                                 }
                                 Spacer()
                                 Text(money(price * Double(qty)))
@@ -127,7 +127,7 @@ struct AdminOrderCard: View {
 
                     Button("Löschen") {
                         // Normally show confirmation
-                    }.foregroundStyle(.red).font(.caption)
+                    }.foregroundColor(.red).font(.caption)
                 }
             }
         }
