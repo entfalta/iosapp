@@ -14,11 +14,11 @@ struct UserManagementView: View {
                 if users.isEmpty {
                     Text("Lade Nutzer...").padding()
                 } else {
-                    ForEach(users.filter {
+                    ForEach(Array(users.filter {
                         let mail = $0["email"] as? String ?? ""
                         let name = $0["name"] as? String ?? ""
                         return search.isEmpty || mail.contains(search) || name.contains(search)
-                    }.prefix(20), id: \.self.id) { user in
+                    }.prefix(20)), id: \.id) { user in
                         VStack(alignment: .leading) {
                             Text(user["name"] as? String ?? "Unbekannt").bold()
                             Text(user["email"] as? String ?? "").font(.caption)
@@ -41,7 +41,7 @@ struct UserManagementView: View {
 }
 
 extension Dictionary where Key == String, Value == Any {
-    var id: String { self["id"] as? String ?? UUID().uuidString }
+    var id: String { (self["id"] as? String) ?? (self["uid"] as? String) ?? (self["email"] as? String) ?? "user" }
 }
 
 struct AuthMailView: View {

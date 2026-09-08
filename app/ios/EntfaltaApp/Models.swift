@@ -80,7 +80,7 @@ struct Order: Identifiable, Codable {
     }
 
     // Manual decoding for [String: Any] and [[String: Any]] because they are not Codable by default
-    init(id: String, orderNumber: String, customerName: String, customerEmail: String, total: Double, status: String, fulfillmentStatus: String?, shipmentStatus: String?, trackingNumber: String?, trackingUrl: String?, sendcloudParcelId: String?, shippingLabelUrl: String?, createdAtMs: Double, archived: Bool, type: String? = nil, giftVoucher: [String: Any]? = nil, items: [[String: Any]]? = nil) {
+    init(id: String, orderNumber: String, customerName: String, customerEmail: String, total: Double, status: String, fulfillmentStatus: String? = nil, shipmentStatus: String? = nil, trackingNumber: String? = nil, trackingUrl: String? = nil, sendcloudParcelId: String? = nil, shippingLabelUrl: String? = nil, createdAtMs: Double = 0, archived: Bool = false, type: String? = nil, giftVoucher: [String: Any]? = nil, items: [[String: Any]]? = nil) {
         self.id = id
         self.orderNumber = orderNumber
         self.customerName = customerName
