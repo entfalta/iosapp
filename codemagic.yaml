@@ -1,0 +1,32 @@
+workflows:
+  ios-unsigned-workflow:
+    name: iOS Unsigned IPA Build
+    max_build_duration: 15
+    instance_type: mac_mini_m1
+    environment:
+      xcode: latest
+      vars:
+        XCODE_PROJECT: "EntfaltaApp.xcodeproj"
+        XCODE_SCHEME: "EntfaltaApp"
+    scripts:
+      - name: Build unsigned App
+        script: |
+          xcodebuild build \
+            -project "$XCODE_PROJECT" \
+            -scheme "$XCODE_SCHEME" \
+            -sdk iphoneos \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO
+      - name: Package into .ipa
+        script: |
+          mkdir -p Payload
+          APP_PATH=$(find $HOME/Library/Developer/Xcode/DerivedData -name "EntfaltaApp.app" -type d | head -n 1)
+          if [ -z "$APP_PATH" ]; then
+            echo "Fehler: .app-Verzeichnis wurde nicht gefunden!"
+            exit 1
+          fi
+          cp -r "$APP_PATH" Payload/
+          zip -r EntfaltaApp_unsigned.ipa Payload
+    artifacts:
+      - "EntfaltaApp_unsigned.ipa"
