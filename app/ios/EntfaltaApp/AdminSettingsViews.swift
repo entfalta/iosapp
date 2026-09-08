@@ -1,8 +1,16 @@
 import SwiftUI
 
+struct AdminUser: Identifiable {
+    var id: String
+    var name: String
+    var email: String
+    var admin: Bool
+    var support: Bool
+}
+
 struct UserManagementView: View {
     @EnvironmentObject private var state: AppState
-    @State private var users: [[String: Any]] = []
+    @State private var users: [AdminUser] = []
     @State private var search = ""
 
     var body: some View {
@@ -15,17 +23,15 @@ struct UserManagementView: View {
                     Text("Lade Nutzer...").padding()
                 } else {
                     ForEach(Array(users.filter {
-                        let mail = $0["email"] as? String ?? ""
-                        let name = $0["name"] as? String ?? ""
-                        return search.isEmpty || mail.contains(search) || name.contains(search)
-                    }.prefix(20)), id: \.id) { user in
+                        search.isEmpty || $0.email.contains(search) || $0.name.contains(search)
+                    }.prefix(20))) { user in
                         VStack(alignment: .leading) {
-                            Text(user["name"] as? String ?? "Unbekannt").bold()
-                            Text(user["email"] as? String ?? "").font(.caption)
+                            Text(user.name).bold()
+                            Text(user.email).font(.caption)
                             HStack {
-                                Text("Admin: \( (user["admin"] as? Bool ?? false) ? "Ja" : "Nein" )")
+                                Text("Admin: \( user.admin ? "Ja" : "Nein" )")
                                 Spacer()
-                                Text("Support: \( (user["support"] as? Bool ?? false) ? "Ja" : "Nein" )")
+                                Text("Support: \( user.support ? "Ja" : "Nein" )")
                             }.font(.system(size: 10))
                         }.entfaltaCard(padding: 12)
                     }
@@ -36,12 +42,17 @@ struct UserManagementView: View {
     }
 
     private func loadUsers() async throws {
-        users = try await FirebaseRest.shared.list(collection: "users", token: state.session?.idToken)
+        let docs = try await FirebaseRest.shared.list(collection: "users", token: state.session?.idToken)
+        users = docs.map { doc in
+            AdminUser(
+                id: doc["id"] as? String ?? UUID().uuidString,
+                name: doc["name"] as? String ?? "Unbekannt",
+                email: doc["email"] as? String ?? "",
+                admin: doc["admin"] as? Bool ?? false,
+                support: doc["support"] as? Bool ?? false
+            )
+        }
     }
-}
-
-extension Dictionary where Key == String, Value == Any {
-    var id: String { (self["id"] as? String) ?? (self["uid"] as? String) ?? (self["email"] as? String) ?? "user" }
 }
 
 struct AuthMailView: View {
