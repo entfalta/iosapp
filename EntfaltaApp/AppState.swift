@@ -78,32 +78,68 @@ final class AppState: ObservableObject {
         } catch { print("Stats Error: \(error)") }
     }
 
+    private func parseNum(_ value: Any?) -> Double? {
+        if let d = value as? Double { return d }
+        if let i = value as? Int { return Double(i) }
+        if let s = value as? String, let d = Double(s) { return d }
+        return nil
+    }
+
+    private func parseBool(_ value: Any?) -> Bool? {
+        if let b = value as? Bool { return b }
+        if let s = value as? String { return (s as NSString).boolValue }
+        if let i = value as? Int { return i != 0 }
+        return nil
+    }
+
     func loadProducts() async {
         do {
             let now = Date().timeIntervalSince1970 * 1000
-            products = try await FirebaseRest.shared.list(collection: "books", token: session?.idToken).compactMap { doc in
+            let rawDocs = try await FirebaseRest.shared.list(collection: "books", token: session?.idToken)
+            products = rawDocs.compactMap { doc in
+                let release = parseNum(doc["releaseDateMs"]) ?? 0
+                let active = parseBool(doc["active"]) ?? true
+                let hidden = parseBool(doc["hidden"]) ?? false
+                let disabled = parseBool(doc["disabled"]) ?? false
+
                 if !isAdmin {
-                    let release = doc["releaseDateMs"] as? Double ?? 0
                     if release > now { return nil }
+                    if !active || hidden || disabled { return nil }
                 }
+
+                let title = (doc["title"] as? String) ?? (doc["name"] as? String) ?? "Artikel"
+                let desc = (doc["description"] as? String) ?? ""
+                let cat = (doc["category"] as? String) ?? "Sonstige"
+                let itemType = (doc["itemType"] as? String) ?? "book"
+                let cover = (doc["cover"] as? String) ?? (doc["image"] as? String) ?? ""
+
+                let price = parseNum(doc["price"]) ?? 0
+                let downloadPrice = parseNum(doc["downloadPrice"]) ?? 0
+                let printPrice = parseNum(doc["printPrice"]) ?? 0
+                let stock = Int(parseNum(doc["stock"]) ?? 0)
+                let sold = Int(parseNum(doc["sold"]) ?? 0)
+                let publishedAtMs = parseNum(doc["publishedAtMs"]) ?? 0
+
+                let variantsList = (doc["variants"] as? [[String: Any]])?.compactMap { vDoc -> ProductVariant? in
+                    guard let name = vDoc["name"] as? String, let p = parseNum(vDoc["price"]) else { return nil }
+                    return ProductVariant(name: name, price: p)
+                }
+
                 return Product(
                     id: doc["id"] as? String ?? UUID().uuidString,
-                    title: doc["title"] as? String ?? "Artikel",
-                    description: doc["description"] as? String ?? "",
-                    category: doc["category"] as? String ?? "",
-                    itemType: doc["itemType"] as? String ?? "book",
-                    cover: doc["cover"] as? String ?? "",
-                    price: doc["price"] as? Double ?? 0,
-                    downloadPrice: doc["downloadPrice"] as? Double ?? 0,
-                    printPrice: doc["printPrice"] as? Double ?? 0,
-                    stock: Int(doc["stock"] as? Double ?? 0),
-                    sold: Int(doc["sold"] as? Double ?? 0),
-                    active: doc["active"] as? Bool ?? true,
-                    publishedAtMs: doc["publishedAtMs"] as? Double ?? 0,
-                    variants: (doc["variants"] as? [[String: Any]])?.compactMap {
-                        guard let name = $0["name"] as? String, let p = $0["price"] as? Double else { return nil }
-                        return ProductVariant(name: name, price: p)
-                    }
+                    title: title,
+                    description: desc,
+                    category: cat,
+                    itemType: itemType,
+                    cover: cover,
+                    price: price,
+                    downloadPrice: downloadPrice,
+                    printPrice: printPrice,
+                    stock: stock,
+                    sold: sold,
+                    active: active,
+                    publishedAtMs: publishedAtMs,
+                    variants: variantsList
                 )
             }
         } catch { message = error.localizedDescription }
@@ -259,6 +295,16 @@ final class AppState: ObservableObject {
             session = auth
             savedRefreshToken = auth.refreshToken
             try await FirebaseRest.shared.set(collection: "users", id: auth.uid, values: ["name": name, "email": email, "admin": false], token: auth.idToken)
+            await loadProfile()
+            await refreshAll()
+        }
+    }
+
+    func signInWithGoogle(idToken: String? = nil, email: String? = nil) async {
+        await runBusy("Google-Anmeldung fehlgeschlagen") {
+            let auth = try await FirebaseRest.shared.signInWithGoogle(idToken: idToken, email: email)
+            session = auth
+            savedRefreshToken = auth.refreshToken
             await loadProfile()
             await refreshAll()
         }

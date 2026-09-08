@@ -174,6 +174,29 @@ struct LoginView: View {
                 }
 
                 VStack(spacing: 15) {
+                    Button {
+                        Task {
+                            await state.signInWithGoogle(email: email.isEmpty ? nil : email)
+                        }
+                    } label: {
+                        HStack(spacing: 10) {
+                            Text("G").font(.system(size: 20, weight: .bold)).foregroundColor(.red)
+                            Text("Mit Google anmelden")
+                                .font(EntfaltaTheme.segoe(15, bold: true))
+                                .foregroundColor(.white)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
+                        .background(Color.white.opacity(0.1), in: Capsule())
+                        .overlay(Capsule().stroke(EntfaltaTheme.cardBorder, lineWidth: 1))
+                    }
+
+                    HStack {
+                        Rectangle().fill(Color.white.opacity(0.1)).frame(height: 1)
+                        Text("oder").font(.caption).foregroundColor(EntfaltaTheme.textMuted)
+                        Rectangle().fill(Color.white.opacity(0.1)).frame(height: 1)
+                    }
+
                     if isRegister {
                         EntfaltaTextField(placeholder: "Vollständiger Name", text: $name)
                     }
