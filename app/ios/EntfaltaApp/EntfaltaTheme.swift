@@ -64,13 +64,24 @@ extension View {
 struct EntfaltaTextField: View {
     let placeholder: String
     @Binding var text: String
+    var keyboardType: UIKeyboardType = .default
+    var isSecure: Bool = false
+
     var body: some View {
-        TextField("", text: $text, prompt: Text(placeholder).foregroundStyle(EntfaltaTheme.textMuted))
-            .font(EntfaltaTheme.segoe(15))
-            .padding(.horizontal, 20)
-            .padding(.vertical, 14)
-            .background(EntfaltaTheme.forestGreen.opacity(0.5))
-            .clipShape(Capsule())
-            .overlay(Capsule().stroke(EntfaltaTheme.cardBorder, lineWidth: 1))
+        Group {
+            if isSecure {
+                SecureField("", text: $text, prompt: Text(placeholder).foregroundStyle(EntfaltaTheme.textMuted))
+            } else {
+                TextField("", text: $text, prompt: Text(placeholder).foregroundStyle(EntfaltaTheme.textMuted))
+                    .keyboardType(keyboardType)
+                    .autocapitalization(.none)
+            }
+        }
+        .font(EntfaltaTheme.segoe(15))
+        .padding(.horizontal, 20)
+        .padding(.vertical, 14)
+        .background(EntfaltaTheme.forestGreen.opacity(0.5))
+        .clipShape(Capsule())
+        .overlay(Capsule().stroke(EntfaltaTheme.cardBorder, lineWidth: 1))
     }
 }

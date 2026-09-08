@@ -178,17 +178,8 @@ struct LoginView: View {
                         EntfaltaTextField(placeholder: "Vollständiger Name", text: $name)
                     }
 
-                    EntfaltaTextField(placeholder: "E-Mail Adresse", text: $email)
-                        .autocapitalization(.none)
-                        .keyboardType(.emailAddress)
-
-                    SecureField("", text: $password, prompt: Text("Passwort").foregroundStyle(EntfaltaTheme.textMuted))
-                        .font(EntfaltaTheme.segoe(15))
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 14)
-                        .background(EntfaltaTheme.forestGreen.opacity(0.5))
-                        .clipShape(Capsule())
-                        .overlay(Capsule().stroke(EntfaltaTheme.cardBorder, lineWidth: 1))
+                    EntfaltaTextField(placeholder: "E-Mail Adresse", text: $email, keyboardType: .emailAddress)
+                    EntfaltaTextField(placeholder: "Passwort", text: $password, isSecure: true)
 
                     Button(isRegister ? "Registrieren" : "Anmelden") {
                         Task {
