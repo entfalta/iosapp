@@ -58,9 +58,11 @@ struct ProductCard: View {
                 HStack {
                     Stepper("", value: $quickQuantity, in: 1...max(1, product.stock))
                         .labelsHidden()
-                    Button("Hinzufügen") {
+                    Button(action: {
                         state.addToCart(product, format: "print", quantity: quickQuantity, variant: selectedVariantName)
-                    }.font(.caption).bold()
+                    }) {
+                        Text("Hinzufügen").font(.caption).bold()
+                    }
                 }
                 .padding(.top, 4)
             }
@@ -112,7 +114,7 @@ struct ProductDetail: View {
                     Text(product.title).font(EntfaltaTheme.segoe(32, bold: true))
 
                     if let isbn = product.isbn {
-                        Text("ISBN: \(isbn)").font(.caption.monospaced()).foregroundColor(.secondary)
+                        Text("ISBN: \(isbn)").font(.system(.caption, design: .monospaced)).foregroundColor(.secondary)
                     }
 
                     Text(product.description).font(EntfaltaTheme.segoe(16))
