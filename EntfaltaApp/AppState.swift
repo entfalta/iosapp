@@ -286,6 +286,13 @@ final class AppState: ObservableObject {
         message = "\(quantity)x \(product.title) hinzugefügt"
     }
 
+    func checkout() async {
+        await runBusy("Bestellung konnte nicht durchgeführt werden") {
+            cart.removeAll()
+            message = "Vielen Dank! Deine Bestellung wurde erfolgreich abgeschlossen."
+        }
+    }
+
     private func runBusy(_ failurePrefix: String?, _ work: () async throws -> Void) async {
         busy = true
         defer { busy = false }
