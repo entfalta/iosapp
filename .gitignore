@@ -1,0 +1,14 @@
+.env
+.env.*
+node_modules/
+.netlify/
+build/
+*.app/
+*.ipa
+.artifacts/
+.tmp.*/
+.tmp.driveupload/
+android/app/build/
+app/android/app/build/
+app/ios/build/
+app/ios/DerivedData/

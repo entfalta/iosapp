@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Lagerbestand - Entfalta</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/png" href="/favicon.png">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="admin.html">
+        <img src="assets/icon.jpeg" alt="" class="brand-mark">
+        <span><strong>Entfalta</strong><small>Lager</small></span>
+      </a>
+      <nav class="main-nav" aria-label="Hauptnavigation">
+        <a href="index.html">Shop</a>
+        <a href="admin.html">Admin-Panel</a>
+        <button class="user-button" id="accountButton" type="button" aria-label="Konto öffnen" title="Konto">
+          <span aria-hidden="true"></span>
+        </button>
+      </nav>
+    </header>
+
+    <main class="admin-main">
+      <article class="panel admin-panel hidden" id="adminPanel">
+        <h1>Lagerbestand</h1>
+        <p class="muted">Aktuelle Bestände aller physischen Artikel.</p>
+        <div id="lagerList" class="admin-list"></div>
+      </article>
+
+      <article class="panel" id="adminLoginHint">
+        <h1>Admin-Zugang nötig</h1>
+        <p>Bitte melde dich als Administrator an.</p>
+      </article>
+    </main>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,131 @@
+﻿<!doctype html>
+<html lang="de">
+  <head>
+        <!-- Google tag (gtag.js) - Consent default: denied until cookie approval -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('consent', 'default', {
+        'analytics_storage': 'denied',
+        'wait_for_update': 500
+      });
+      window['ga-disable-G-EVXWLFFWDN'] = true;
+    </script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-EVXWLFFWDN"></script>
+    <script>
+      gtag('js', new Date());
+      gtag('config', 'G-EVXWLFFWDN');
+    </script><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#3f6f45">
+    <title>Emotions-Memory - Entfalta Spiele</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="icon" type="image/png" href="../favicon.png">
+  </head>
+  <body data-page="emotion-memory">
+    <header class="site-header game-header compact-header">
+      <a class="brand game-brand" href="../index.html" aria-label="Entfalta Startseite">
+        <img src="../assets/icon.jpeg" alt="" class="brand-mark">
+        <span><strong>Entfalta</strong><small>Emotions-Memory</small></span>
+      </a>
+      <nav class="main-nav" aria-label="Spielenavigation">
+        <a href="../index.html">Shop</a>
+        <a href="index.html" class="active">Spiele</a>
+        <a id="gameStatsNavLink" class="hidden" href="statistiken.html">Spiele-Statistiken</a>
+        <button class="user-button" id="accountButton" type="button" aria-label="Konto öffnen" title="Konto">
+          <span aria-hidden="true"></span>
+        </button>
+      </nav>
+    </header>
+
+    <main class="memory-main">
+      <section class="memory-toolbar" aria-labelledby="gameTitle">
+        <div class="memory-title">
+          <p class="eyebrow">Gefühle entdecken</p>
+          <h1 id="gameTitle">Emotions-Memory</h1>
+          <p class="kind-note">Kinder können sich in derselben Situation unterschiedlich fühlen.</p>
+        </div>
+
+        <div class="memory-controls">
+          <div class="difficulty-control" aria-label="Schwierigkeitsstufe">
+            <button type="button" data-pairs="4" aria-label="Leicht">●</button>
+            <button type="button" data-pairs="6" class="is-active" aria-label="Mittel">●●</button>
+            <button type="button" data-pairs="8" aria-label="Schwer">●●●</button>
+          </div>
+          <button id="restartGame" class="icon-control" type="button" title="Neues Spiel" aria-label="Neues Spiel">↻</button>
+        </div>
+      </section>
+
+      <section class="memory-status" aria-label="Spielstand">
+        <div><strong id="moveCount">0</strong><span>Züge</span></div>
+        <div><strong id="pairCount">0 / 6</strong><span>Paare</span></div>
+        <div><strong id="timeCount">0:00</strong><span>Zeit</span></div>
+      </section>
+
+      <p id="memoryMessage" class="memory-message" aria-live="polite">Decke zwei Karten auf.</p>
+      <section id="memoryBoard" class="memory-board" aria-label="Memory-Spielfeld"></section>
+    </main>
+
+    <div id="winDialog" class="win-dialog hidden" role="dialog" aria-modal="true" aria-labelledby="winTitle">
+      <section class="win-panel">
+        <div class="win-mark" aria-hidden="true">★</div>
+        <h2 id="winTitle">Alle Gefühle gefunden!</h2>
+        <p id="winSummary"></p>
+        <div class="win-actions">
+          <button id="playAgain" type="button">Noch einmal</button>
+          <a href="index.html">Andere Spiele</a>
+        </div>
+      </section>
+    </div>
+
+    <div class="modal hidden" id="authModal" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+      <div class="modal-content auth-modal-content">
+        <button class="icon-button modal-close" id="closeAuth" type="button" aria-label="Konto schließen">X</button>
+        <div id="currentUserBox" class="current-user hidden"></div>
+        <form id="registerForm" class="stacked-form">
+          <h2 id="authTitle">Registrieren</h2>
+          <input name="name" autocomplete="name" placeholder="Name" required>
+          <input name="email" type="email" autocomplete="email" placeholder="E-Mail" required>
+          <input name="password" type="password" autocomplete="new-password" placeholder="Passwort" required>
+          <input name="street" autocomplete="street-address" placeholder="Adresse">
+          <div class="form-two">
+            <input name="zip" autocomplete="postal-code" inputmode="numeric" placeholder="PLZ">
+            <input name="city" autocomplete="address-level2" placeholder="Stadt">
+          </div>
+          <button type="submit">Konto erstellen</button>
+        </form>
+        <form id="loginForm" class="stacked-form">
+          <h2>Login</h2>
+          <input name="email" type="email" autocomplete="email" placeholder="E-Mail" required>
+          <input name="password" type="password" autocomplete="current-password" placeholder="Passwort" required>
+          <button type="submit">Einloggen</button>
+          <button class="google-button" id="googleLogin" type="button">Mit Google anmelden</button>
+        </form>
+      </div>
+    </div>
+
+    <footer class="site-footer game-footer">
+      <a href="../impressum.html">Impressum</a>
+      <a href="../datenschutz.html">Datenschutz</a>
+      <a href="../agb.html">AGB</a>
+      <a href="../kontakt.html">Kontakt</a>
+      <a href="../newsletter.html">Newsletter</a>
+      <a href="../social-media.html">Social Media</a>
+      <a href="index.html">Spiele</a>
+    </footer>
+
+    <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+    <div id="gameToast" class="game-toast hidden" role="status" aria-live="polite"></div>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+    <script src="../firebase-config.js"></script>
+    <script src="../app.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
+
+
+
+
+

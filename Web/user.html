@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Profil - Entfalta</title>
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="icon" type="image/png" href="/favicon.png">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="/index.html">
+        <img src="/assets/icon.jpeg" alt="" class="brand-mark">
+        <span>
+          <strong>Entfalta</strong>
+          <small>Nutzerprofil</small>
+        </span>
+      </a>
+      <nav class="main-nav">
+        <a href="/index.html">Shop</a>
+        <a href="/games.html">Spiele</a>
+        <button class="user-button" id="accountButton" type="button" aria-label="Konto öffnen">
+          <span aria-hidden="true"></span>
+        </button>
+      </nav>
+    </header>
+
+    <main class="admin-main">
+      <div id="publicProfilePanel">
+        <article class="panel profile-page-card">
+          <p class="muted">Profil wird geladen...</p>
+        </article>
+      </div>
+    </main>
+
+    <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+    <script src="/firebase-config.js"></script>
+    <script src="/app.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", async () => {
+        // Simple router for /user/ID
+        const path = window.location.pathname;
+        const match = path.match(/\/user\/([^\/]+)/);
+        const userId = match ? match[1] : new URLSearchParams(window.location.search).get("id");
+
+        if (!userId) {
+          document.getElementById("publicProfilePanel").innerHTML = `
+            <article class="panel profile-page-card">
+              <h1>Kein Nutzer ausgewählt</h1>
+              <div style="margin-top: 20px;">
+                <a href="index.html" class="primary-link">Zurück zum Shop</a>
+              </div>
+            </article>
+          `;
+          return;
+        }
+
+        // Wait for firebase and auth state to be sure if we are admin
+        const check = setInterval(() => {
+          const database = window.db || (typeof db !== "undefined" ? db : null);
+          const ready = window.authReady || (typeof authReady !== "undefined" ? authReady : false);
+
+          if (database && ready) {
+            clearInterval(check);
+            renderPublicProfilePage(userId);
+          }
+        }, 100);
+      });
+
+      async function renderPublicProfilePage(lookupId) {
+        const panel = document.getElementById("publicProfilePanel");
+        const database = window.db || (typeof db !== "undefined" ? db : null);
+
+        if (!database) {
+          panel.innerHTML = `<article class="panel profile-page-card"><h1>Fehler</h1><p>Datenbank-Verbindung konnte nicht hergestellt werden.</p></article>`;
+          return;
+        }
+
+        try {
+          // 1. Try finding by shortId
+          let snap = await database.collection("users").where("shortId", "==", lookupId).limit(1).get();
+          let doc = snap.empty ? null : snap.docs[0];
+
+          // 2. Fallback to direct UID lookup
+          if (!doc) {
+             const fallback = await database.collection("users").doc(lookupId).get();
+             if (fallback.exists) doc = fallback;
+          }
+
+          if (!doc) {
+            panel.innerHTML = `
+              <article class="panel profile-page-card">
+                <h1>Nutzer nicht gefunden</h1>
+                <p class="muted">Vielleicht ist der Link veraltet oder die ID falsch.</p>
+                <div style="margin-top: 20px;">
+                  <a href="/index.html" class="primary-link">Zurück zum Shop</a>
+                </div>
+              </article>
+            `;
+            return;
+          }
+
+          const data = doc.data();
+          const targetUid = doc.id;
+          const isPublic = data.publicProfile === true;
+          const admin = typeof isAdmin === "function" ? isAdmin() : (window.currentProfile?.admin || false);
+
+          if (!isPublic && !admin && targetUid !== (window.currentUser?.uid || null)) {
+            panel.innerHTML = `
+              <article class="panel profile-page-card">
+                <div class="profile-header-box">
+                  <div class="profile-avatar-xl" style="margin: 0 auto; background: var(--clay); display: grid; place-items: center; color: white; font-size: 40px; border: 4px solid var(--line);">?</div>
+                </div>
+                <h1>Privates Profil</h1>
+                <p class="muted">Dieser Nutzer möchte sein Profil nicht öffentlich zeigen.</p>
+                <div style="margin-top: 20px;">
+                  <a href="/index.html" class="primary-link">Zurück zum Shop</a>
+                </div>
+              </article>
+            `;
+            return;
+          }
+
+          let html = `
+            <article class="panel profile-page-card">
+              ${!isPublic && admin ? '<div class="admin-badge" style="background: var(--orange); color: white; padding: 5px 15px; border-radius: 20px; display: inline-block; margin-bottom: 20px; font-weight: bold; font-size: 0.8rem;">Admin-Einsicht: Profil ist privat</div>' : ''}
+              <div class="profile-header-box">
+                <img src="${data.profilePhotoDataUrl || data.photoUrl || '/assets/icon.jpeg'}" class="profile-avatar-xl" alt="Profilbild">
+                <h1 style="margin-top: 15px;">${escapeHtml(data.name || 'Anonymer Nutzer')}</h1>
+                ${data.shortId ? `<div class="short-id-badge">ID: ${data.shortId}</div>` : ''}
+                <p class="muted">${escapeHtml(data.email || '')}</p>
+              </div>
+
+              <div class="card-actions" style="justify-content: center;">
+                 <a href="/index.html" class="secondary-link">Zum Shop</a>
+              </div>
+          `;
+
+          if (admin) {
+            html += `
+              <div class="admin-section" style="margin-top: 40px; padding-top: 30px; border-top: 2px dashed var(--line); text-align: left;">
+                <h2 style="text-align: center; margin-bottom: 20px;">Admin-Werkzeuge</h2>
+                <div class="admin-actions" style="justify-content: center; margin-bottom: 30px; flex-wrap: wrap; gap: 10px;">
+                  <button type="button" onclick="resetUserPasswordTo0('${targetUid}')">Passwort reset</button>
+                  <button type="button" onclick="toggleManagedUserRole('${targetUid}', 'admin')">${data.admin ? 'Admin entfernen' : 'Zum Admin machen'}</button>
+                  <button type="button" onclick="toggleManagedUserRole('${targetUid}', 'support')">${data.support ? 'Support entfernen' : 'Zum Support machen'}</button>
+                  <button type="button" onclick="toggleManagedUserDisabled('${targetUid}')">${data.disabled ? 'Entsperren' : 'Sperren'}</button>
+                  <button type="button" class="danger-button" style="background: #7e2d24; color: white;" onclick="deleteUserPermanently('${targetUid}')">Profil löschen</button>
+                </div>
+
+                <h3>Bestellhistorie (Admin)</h3>
+                <div id="adminOrderHistory" class="admin-list">Lade Bestellungen...</div>
+              </div>
+            `;
+            loadAdminOrderHistory(targetUid);
+          }
+
+          html += `</article>`;
+          panel.innerHTML = html;
+        } catch (e) {
+          panel.innerHTML = `<article class="panel profile-page-card"><h1>Fehler beim Laden</h1><p>${e.message}</p></article>`;
+        }
+      }
+
+      async function resetUserPasswordTo0(uid) {
+        if (!confirm("Passwort wirklich auf 00000000 zurücksetzen?")) return;
+        try {
+          const res = await postToBackend("admin-reset-password", { uid, adminUid: currentUser.uid });
+          showToast(res.message || "Passwort wurde zurückgesetzt.");
+        } catch (e) {
+          console.error(e);
+          showToast(e.message || "Fehler beim Zurücksetzen.");
+        }
+      }
+
+      async function loadAdminOrderHistory(uid) {
+        const div = document.getElementById("adminOrderHistory");
+        try {
+          const snap = await db.collection("orders").where("customer.userId", "==", uid).get();
+          if (snap.empty) {
+            div.innerHTML = "<p class='muted'>Keine Bestellungen gefunden.</p>";
+            return;
+          }
+          div.innerHTML = snap.docs.map(doc => {
+            const o = doc.data();
+            return `
+              <div class="admin-item">
+                <strong>${o.orderNumber || doc.id}</strong>
+                <p>${Number(o.total || 0).toFixed(2)} EUR - ${o.fulfillmentStatus || 'offen'}</p>
+              </div>
+            `;
+          }).join("");
+        } catch (e) {
+          div.innerHTML = "<p class='is-error'>Fehler: " + e.message + "</p>";
+        }
+      }
+
+      // Global stubs for onclick
+      window.toggleManagedUserRole = async (uid, role) => {
+        try {
+          const doc = await db.collection("users").doc(uid).get();
+          if (!doc.exists) return showToast("Nutzer nicht gefunden.");
+          const currentVal = doc.data()[role] || false;
+          const next = !currentVal;
+
+          const updateData = { [role]: next };
+          if (role === 'admin' && next) updateData.support = false; // Admin implies support or replaces it
+
+          await db.collection("users").doc(uid).update(updateData);
+          showToast(next ? `Nutzer wurde zum ${role} befördert.` : `Rolle ${role} entfernt.`);
+          setTimeout(() => location.reload(), 1000);
+        } catch (e) { showToast(e.message); }
+      };
+
+      window.toggleManagedUserDisabled = async (uid) => {
+        try {
+          const doc = await db.collection("users").doc(uid).get();
+          if (!doc.exists) return showToast("Nutzer nicht gefunden.");
+          const current = doc.data().disabled || false;
+          const next = !current;
+          await db.collection("users").doc(uid).update({ disabled: next });
+          showToast(next ? "Profil wurde gesperrt." : "Profil wurde entsperrt.");
+          setTimeout(() => location.reload(), 1000);
+        } catch (e) { showToast(e.message); }
+      };
+
+      window.deleteUserPermanently = async (uid) => {
+        const firstWarning = "Profil wirklich löschen? Das entfernt alle Profildaten aus Firestore.";
+        if (!confirm(firstWarning)) return;
+        const secondWarning = "Zweite Bestätigung: Das Profil wird jetzt unwiderruflich gelöscht. Fortfahren?";
+        if (!confirm(secondWarning)) return;
+
+        try {
+          await db.collection("users").doc(uid).delete();
+          showToast("Nutzer gelöscht.");
+          setTimeout(() => window.location.href = "/nutzerverwaltung.html", 1000);
+        } catch (e) { showToast(e.message); }
+      };
+      // Re-render when profile loads
+      const originalRenderAll = window.renderAll;
+      window.renderAll = function() {
+        if (typeof originalRenderAll === "function") originalRenderAll();
+        const match = window.location.pathname.match(/\/user\/([^\/]+)/);
+        const userId = match ? match[1] : new URLSearchParams(window.location.search).get("id");
+        if (userId && window.db && window.authReady) {
+           renderPublicProfilePage(userId);
+        }
+      };
+    </script>
+  </body>
+</html>

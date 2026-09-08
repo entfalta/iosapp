@@ -1,0 +1,141 @@
+﻿<!doctype html>
+<html lang="de">
+  <head>
+        <!-- Google tag (gtag.js) - Consent default: denied until cookie approval -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('consent', 'default', {
+        'analytics_storage': 'denied',
+        'wait_for_update': 500
+      });
+      window['ga-disable-G-EVXWLFFWDN'] = true;
+    </script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-EVXWLFFWDN"></script>
+    <script>
+      gtag('js', new Date());
+      gtag('config', 'G-EVXWLFFWDN');
+    </script><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Gutschein-Vorlage - Entfalta</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="admin.html">
+        <img src="assets/icon.jpeg" alt="" class="brand-mark">
+        <span><strong>Entfalta</strong><small>Gutscheine</small></span>
+      </a>
+      <nav class="main-nav" aria-label="Hauptnavigation">
+        <a href="index.html">Shop</a>
+        <a href="admin.html">Admin-Panel</a>
+        <a href="gutschein.html">Gutscheine kaufen</a>
+        <button class="user-button" id="accountButton" type="button" aria-label="Konto öffnen" title="Konto">
+          <span aria-hidden="true"></span>
+        </button>
+      </nav>
+    </header>
+
+    <main class="admin-main">
+      <article class="panel admin-panel hidden" id="adminPanel">
+        <h1>Gutschein-Mail</h1>
+        <p class="muted">Diese Vorlage wird nach einem gekauften oder manuell erstellten Gutschein mit der zentralen E-Mail-Konfiguration verschickt.</p>
+        <p>
+          <a class="secondary-link" href="email-config.html">E-Mail-Konfiguration öffnen</a>
+          <a class="secondary-link" href="code-list.html">Gutschein-Codes ansehen</a>
+        </p>
+        <form id="giftVoucherAdminForm" class="stacked-form">
+          <input name="subject" placeholder="Betreff mit %CODE% und %AMOUNT%" required>
+          <textarea name="body" rows="8" placeholder="Text mit %NAME%, %CODE%, %AMOUNT%" required></textarea>
+          <p class="muted">Platzhalter: %NAME%, %CODE%, %AMOUNT%.</p>
+          <button type="submit">Gutscheinvorlage speichern</button>
+        </form>
+
+        <form id="giftVoucherTemplateForm" class="stacked-form">
+          <h2>Kauf-Vorlagen</h2>
+          <p class="muted">Diese Beträge werden Kunden auf der Gutscheinseite als Schnell-Auswahl angezeigt.</p>
+          <input name="id" type="hidden">
+          <input name="label" placeholder="Name, z.B. Kleiner Mutmacher">
+          <input name="amount" type="number" min="2.50" max="500" step="0.01" placeholder="Betrag in EUR, z.B. 20" required>
+          <label class="checkbox-line">
+            <input name="active" type="checkbox" checked>
+            <span>Auf der Gutscheinseite anzeigen</span>
+          </label>
+          <button type="submit">Vorlage speichern</button>
+        </form>
+
+        <div id="giftVoucherTemplateList" class="admin-list"></div>
+
+        <form id="manualGiftVoucherForm" class="stacked-form">
+          <h2>Gutschein manuell erstellen</h2>
+          <input name="amount" type="number" min="2.50" max="500" step="0.01" placeholder="Betrag in EUR" required>
+          <input name="recipientName" placeholder="Empfängername">
+          <input name="recipientEmail" type="email" placeholder="Empfänger-E-Mail optional">
+          <label class="checkbox-line">
+            <input name="adminOnly" type="checkbox">
+            <span>Nur Admins dürfen diesen Code einlösen</span>
+          </label>
+          <label class="checkbox-line">
+            <input name="unlimitedForAdmins" type="checkbox">
+            <span>Für Admins unendlich nutzbar</span>
+          </label>
+          <button type="submit">Gutschein-Code erstellen</button>
+        </form>
+      </article>
+
+      <article class="panel" id="adminLoginHint">
+        <h1>Admin-Zugang nötig</h1>
+        <p>Melde dich mit einem Admin-Konto an, um Gutscheinvorlagen zu bearbeiten.</p>
+      </article>
+    </main>
+
+    <div class="modal hidden" id="authModal" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+      <div class="modal-content auth-modal-content">
+        <button class="icon-button modal-close" id="closeAuth" type="button" aria-label="Konto schließen">X</button>
+        <div id="currentUserBox" class="current-user hidden"></div>
+        <form id="registerForm" class="stacked-form">
+          <h2 id="authTitle">Registrieren</h2>
+          <input name="name" autocomplete="name" placeholder="Name" required>
+          <input name="email" type="email" autocomplete="email" placeholder="E-Mail" required>
+          <input name="password" type="password" autocomplete="new-password" placeholder="Passwort" required>
+          <input name="street" autocomplete="street-address" placeholder="Adresse">
+          <div class="form-two">
+            <input name="zip" autocomplete="postal-code" inputmode="numeric" placeholder="PLZ">
+            <input name="city" autocomplete="address-level2" placeholder="Stadt">
+          </div>
+          <button type="submit">Konto erstellen</button>
+        </form>
+        <form id="loginForm" class="stacked-form">
+          <h2>Login</h2>
+          <input name="email" type="email" autocomplete="email" placeholder="E-Mail" required>
+          <input name="password" type="password" autocomplete="current-password" placeholder="Passwort" required>
+          <button type="submit">Einloggen</button>
+          <button class="google-button" id="googleLogin" type="button">Mit Google anmelden</button>
+        </form>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+      <a href="impressum.html">Impressum</a>
+      <a href="datenschutz.html">Datenschutz</a>
+      <a href="agb.html">AGB</a>
+      <a href="kontakt.html">Kontakt</a>
+      <a href="newsletter.html">Newsletter</a>
+      <a href="social-media.html">Social Media</a>
+      <a href="games.html">Spiele</a>
+      <a href="gutschein.html">Gutscheine</a>
+    </footer>
+
+    <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="app.js"></script>
+    <script src="games/app.js"></script>
+  </body>
+</html>
+
+
+

@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="de">
+  <head>
+        <!-- Google tag (gtag.js) - Consent default: denied until cookie approval -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('consent', 'default', {
+        'analytics_storage': 'denied',
+        'wait_for_update': 500
+      });
+      window['ga-disable-G-EVXWLFFWDN'] = true;
+    </script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-EVXWLFFWDN"></script>
+    <script>
+      gtag('js', new Date());
+      gtag('config', 'G-EVXWLFFWDN');
+    </script><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Social Media - Entfalta</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="index.html">
+        <img src="assets/icon.jpeg" alt="" class="brand-mark">
+        <span>
+          <strong>Entfalta</strong>
+          <small>Social Media</small>
+        </span>
+      </a>
+      <nav class="main-nav" aria-label="Hauptnavigation">
+        <a href="index.html">Shop</a>
+        <a href="newsletter.html">Newsletter</a>
+        <a href="games.html">Spiele</a>
+        <button class="user-button" id="accountButton" type="button" aria-label="Konto öffnen" title="Konto">
+          <span aria-hidden="true"></span>
+        </button>
+      </nav>
+    </header>
+
+    <main class="social-main">
+      <section class="social-hero panel">
+        <p class="muted">Folge mir für Updates, neue Materialien und Einblicke.</p>
+        <h1>Entfalta auf Social Media</h1>
+      </section>
+
+      <section class="social-grid" aria-label="Social-Media-Links">
+        <article class="social-card social-instagram">
+          <span class="social-icon" aria-hidden="true">
+            <img src="assets/icons/insta.png" alt="">
+          </span>
+          <h2>Instagram</h2>
+          <p>Neue Beiträge, kurze Einblicke und aktuelle Shop-Updates.</p>
+          <a class="social-button" href="https://www.instagram.com/entfalta" target="_blank" rel="noopener noreferrer">Auf Instagram folgen</a>
+        </article>
+
+        <article class="social-card social-tiktok">
+          <span class="social-icon" aria-hidden="true">
+            <img src="assets/icons/tiktok.png" alt="">
+          </span>
+          <h2>TikTok</h2>
+          <p>Kurze Videos, Alltagstipps und schnelle Ideen für Lern- und Alltagshelfer.</p>
+          <a class="social-button" href="https://www.tiktok.com/@entfalta" target="_blank" rel="noopener noreferrer">Auf TikTok folgen</a>
+        </article>
+
+        <article class="social-card social-youtube">
+          <span class="social-icon" aria-hidden="true">
+            <img src="assets/icons/yt.png" alt="">
+          </span>
+          <h2>YouTube</h2>
+          <p>Längere Updates, Vorstellungen und hilfreiche Inhalte an einem Ort.</p>
+          <a class="social-button" href="https://www.youtube.com/@entfalta" target="_blank" rel="noopener noreferrer">Auf YouTube abonnieren</a>
+        </article>
+
+        <article class="social-card social-pinterest">
+          <span class="social-icon" aria-hidden="true">
+            <img src="assets/icons/pinterest.png" alt="">
+          </span>
+          <h2>Pinterest</h2>
+          <p>Ideen, Inspirationen und Merkhilfen rund um Bücher, Lernen und Alltag.</p>
+          <a class="social-button" href="https://www.pinterest.com/entfalta" target="_blank" rel="noopener noreferrer">Auf Pinterest folgen</a>
+        </article>
+      </section>
+    </main>
+
+    <div class="modal hidden" id="authModal" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+      <div class="modal-content auth-modal-content">
+        <button class="icon-button modal-close" id="closeAuth" type="button" aria-label="Konto schließen">X</button>
+        <div id="currentUserBox" class="current-user hidden"></div>
+        <form id="registerForm" class="stacked-form">
+          <h2 id="authTitle">Registrieren</h2>
+          <input name="name" autocomplete="name" placeholder="Name" required>
+          <input name="email" type="email" autocomplete="email" placeholder="E-Mail" required>
+          <input name="password" type="password" autocomplete="new-password" placeholder="Passwort" required>
+          <input name="street" autocomplete="street-address" placeholder="Adresse">
+          <div class="form-two">
+            <input name="zip" autocomplete="postal-code" inputmode="numeric" placeholder="PLZ">
+            <input name="city" autocomplete="address-level2" placeholder="Stadt">
+          </div>
+          <button type="submit">Konto erstellen</button>
+        </form>
+        <form id="loginForm" class="stacked-form">
+          <h2>Login</h2>
+          <input name="email" type="email" autocomplete="email" placeholder="E-Mail" required>
+          <input name="password" type="password" autocomplete="current-password" placeholder="Passwort" required>
+          <button type="submit">Einloggen</button>
+          <button class="google-button" id="googleLogin" type="button">Mit Google anmelden</button>
+        </form>
+      </div>
+    </div>
+    <footer class="site-footer">
+      <a href="impressum.html">Impressum</a>
+      <a href="datenschutz.html">Datenschutz</a>
+      <a href="agb.html">AGB</a>
+      <a href="kontakt.html">Kontakt</a>
+      <a href="newsletter.html">Newsletter</a>
+      <a href="social-media.html">Social Media</a>
+      <a href="games.html">Spiele</a>
+    </footer>
+
+    <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="app.js"></script>
+    <script src="games/app.js"></script>
+  </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+

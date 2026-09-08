@@ -1,0 +1,146 @@
+﻿<!doctype html>
+<html lang="de">
+  <head>
+        <!-- Google tag (gtag.js) - Consent default: denied until cookie approval -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('consent', 'default', {
+        'analytics_storage': 'denied',
+        'wait_for_update': 500
+      });
+      window['ga-disable-G-EVXWLFFWDN'] = true;
+    </script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-EVXWLFFWDN"></script>
+    <script>
+      gtag('js', new Date());
+      gtag('config', 'G-EVXWLFFWDN');
+    </script><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Auth-Mails - Entfalta</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="admin.html">
+        <img src="/assets/icon.jpeg" alt="" class="brand-mark">
+        <span>
+          <strong>Entfalta</strong>
+          <small>Auth-Mails</small>
+        </span>
+      </a>
+      <nav class="main-nav" aria-label="Hauptnavigation">
+        <a href="index.html">Shop</a>
+        <a href="admin.html">Admin-Panel</a>
+        <a href="games.html">Spiele</a>
+        <button class="user-button" id="accountButton" type="button" aria-label="Konto öffnen" title="Konto">
+          <span aria-hidden="true"></span>
+        </button>
+      </nav>
+    </header>
+
+    <main class="admin-main auth-admin-page">
+      <article class="panel admin-panel hidden" id="adminPanel">
+        <h1>Auth-Mails</h1>
+        <p class="muted">Hier bearbeitest du nur die Auth-Mail-Vorlagen. SMTP/IMAP wird zentral unter E-Mail-Konfiguration eingerichtet.</p>
+        <p><a class="secondary-link" href="email-config.html">E-Mail-Konfiguration öffnen</a></p>
+
+        <section class="panel" style="margin: 20px 0 40px 0; border: 3px solid var(--leaf); padding: 20px; background: rgba(63, 111, 69, 0.05); border-radius: 20px;">
+          <h2 style="color: var(--leaf);">🧪 E-Mail Szenarien prüfen</h2>
+          <p class="muted">Sende alle System-Mails (Bestätigung, Passwort, Bestellung) auf einmal an eine Test-Adresse, um das Layout zu prüfen.</p>
+          <div class="stacked-form">
+            <input type="email" id="testEmailRecipient" placeholder="Deine Test-E-Mail eingeben..." style="border: 2px solid var(--leaf);">
+            <button type="button" id="runAllEmailScenarios" style="background: var(--leaf);">Alle Szenarien senden & prüfen</button>
+          </div>
+          <div id="emailTestResults" class="hidden" style="margin-top: 20px; font-size: 14px; background: #fff; padding: 15px; border-radius: 12px; border: 1px solid var(--line);"></div>
+        </section>
+
+        <form id="authMailSettingsForm" class="stacked-form">
+          <h2>Vorlage: Passwort zurücksetzen</h2>
+          <input name="passwordResetSubject" placeholder="Betreff">
+          <textarea name="passwordResetBody" rows="6" placeholder="Text mit %NAME% und %AUTHCODE%"></textarea>
+
+          <h2>Vorlage: E-Mail ändern</h2>
+          <input name="emailChangeSubject" placeholder="Betreff">
+          <textarea name="emailChangeBody" rows="6" placeholder="Text mit %NAME%, %EMAIL%, %NEW_EMAIL%, %AUTHCODE%"></textarea>
+
+          <h2>Vorlage: E-Mail bestätigen</h2>
+          <input name="emailVerificationSubject" placeholder="Betreff">
+          <textarea name="emailVerificationBody" rows="6" placeholder="Text mit %NAME%, %EMAIL%, %AUTHCODE%"></textarea>
+
+          <p class="muted">Platzhalter: %NAME%, %EMAIL%, %NEW_EMAIL%, %AUTHCODE%. %AUTHCODE% wird als klickbarer Link in die Mail geschrieben.</p>
+          <button type="submit">Auth-Mail-Vorlagen speichern</button>
+        </form>
+
+        <form id="customEmailForm" class="stacked-form">
+          <h2>Benutzerdefinierte E-Mail senden</h2>
+          <p class="muted">Diese E-Mail wird mit der zentralen E-Mail-Konfiguration verschickt.</p>
+          <input name="to" type="email" placeholder="Empfänger-E-Mail" required>
+          <input name="subject" placeholder="Betreff" required>
+          <textarea name="text" rows="8" placeholder="E-Mail-Text" required></textarea>
+          <button type="submit">E-Mail senden</button>
+        </form>
+      </article>
+
+      <article class="panel" id="adminLoginHint">
+        <h1>Admin-Zugang nötig</h1>
+        <p>Melde dich mit einem Admin-Konto an, um Mail-Vorlagen zu bearbeiten.</p>
+      </article>
+    </main>
+
+    <div class="modal hidden" id="authModal" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+      <div class="modal-content auth-modal-content">
+        <button class="icon-button modal-close" id="closeAuth" type="button" aria-label="Konto schließen">X</button>
+        <div id="currentUserBox" class="current-user hidden"></div>
+        <form id="registerForm" class="stacked-form">
+          <h2 id="authTitle">Registrieren</h2>
+          <input name="name" autocomplete="name" placeholder="Name" required>
+          <input name="email" type="email" autocomplete="email" placeholder="E-Mail" required>
+          <input name="password" type="password" autocomplete="new-password" placeholder="Passwort" required>
+          <input name="street" autocomplete="street-address" placeholder="Adresse">
+          <div class="form-two">
+            <input name="zip" autocomplete="postal-code" inputmode="numeric" placeholder="PLZ">
+            <input name="city" autocomplete="address-level2" placeholder="Stadt">
+          </div>
+          <button type="submit">Konto erstellen</button>
+        </form>
+        <form id="loginForm" class="stacked-form">
+          <h2>Login</h2>
+          <input name="email" type="email" autocomplete="email" placeholder="E-Mail" required>
+          <input name="password" type="password" autocomplete="current-password" placeholder="Passwort" required>
+          <button type="submit">Einloggen</button>
+          <button class="google-button" id="googleLogin" type="button">Mit Google anmelden</button>
+        </form>
+      </div>
+    </div>
+    <footer class="site-footer">
+      <a href="impressum.html">Impressum</a>
+      <a href="datenschutz.html">Datenschutz</a>
+      <a href="agb.html">AGB</a>
+      <a href="kontakt.html">Kontakt</a>
+      <a href="newsletter.html">Newsletter</a>
+      <a href="social-media.html">Social Media</a>
+      <a href="games.html">Spiele</a>
+    </footer>
+
+    <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="app.js"></script>
+    <script src="games/app.js"></script>
+  </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+

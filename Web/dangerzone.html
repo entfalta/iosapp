@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <!-- Google tag (gtag.js) - Consent default: denied until cookie approval -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('consent', 'default', { 'analytics_storage': 'denied', 'wait_for_update': 500 });
+      window['ga-disable-G-EVXWLFFWDN'] = true;
+    </script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-EVXWLFFWDN"></script>
+    <script>
+      gtag('js', new Date());
+      gtag('config', 'G-EVXWLFFWDN');
+    </script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Danger Zone - Entfalta</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="index.html"><img src="/assets/icon.jpeg" alt="" class="brand-mark">
+        <span>
+          <strong>Entfalta</strong>
+          <small>Danger Zone</small>
+        </span>
+      </a>
+      <nav class="main-nav" aria-label="Hauptnavigation">
+        <a href="admin.html">Admin-Panel</a>
+        <a href="index.html">Shop</a>
+        <button class="user-button" id="accountButton" type="button" aria-label="Konto öffnen" title="Konto">
+          <span aria-hidden="true"></span>
+        </button>
+      </nav>
+    </header>
+
+    <main class="legal-page">
+      <article class="panel">
+        <h1>Danger Zone</h1>
+        <p class="muted">Nur Admins. Diese Aktionen löschen sensible Nachweise dauerhaft aus den Bestellungen.</p>
+        <section id="dangerzonePanel" class="admin-list">
+          <h2>Lieferbelege und Signaturen löschen</h2>
+          <p>Entfernt gespeicherte Lieferbelege, Unterschriften und Lieferbeleg-Markierungen aus archivierten Bestellungen. Die Bestellung selbst bleibt erhalten.</p>
+          <button id="deleteDeliveryProofs" type="button">Lieferbelege löschen</button>
+          <p id="dangerzoneStatus" class="muted"></p>
+        </section>
+      </article>
+    </main>
+
+    <footer class="site-footer">
+      <a href="impressum.html">Impressum</a>
+      <a href="datenschutz.html">Datenschutz</a>
+      <a href="agb.html">AGB</a>
+      <a href="kontakt.html">Kontakt</a>
+      <a href="newsletter.html">Newsletter</a>
+      <a href="social-media.html">Social Media</a>
+      <a href="games.html">Spiele</a>
+      <a href="gutschein.html">Gutscheine</a>
+    </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

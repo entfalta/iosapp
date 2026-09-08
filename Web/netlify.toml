@@ -1,17 +1,14 @@
 [build]
-  publish = "Web"
-  functions = "backend/functions"
+  publish = "."
+  command = ""
 
 [build.environment]
   SECRETS_SCAN_ENABLED = "false"
   SECRETS_SCAN_OMIT_KEYS = "SENDCLOUD_SECRET_KEY,STRIPE_SECRET_KEY,SENDCLOUD_PUBLIC_KEY"
 
-[dev]
-  framework = "#static"
-  targetPort = 5500
-  port = 8888
-  publish = "Web"
-  functions = "backend/functions"
+[functions]
+  directory = "backend/functions"
+  node_bundler = "esbuild"
 
 [[redirects]]
   from = "/*"

@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>System Check - Entfalta</title>
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <style>
+      .check-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 15px;
+        background: #fff;
+        border-radius: 15px;
+        margin-bottom: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      }
+      .status-label {
+        font-weight: bold;
+        min-width: 120px;
+      }
+      .status-text {
+        font-family: monospace;
+        font-size: 14px;
+        flex: 1;
+      }
+      .carrier-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-top: 20px;
+      }
+      .method-list {
+        background: rgba(0,0,0,0.03);
+        padding: 10px;
+        border-radius: 10px;
+        margin-top: 10px;
+      }
+      .method-list ul { list-style: none; padding: 0; margin: 0; }
+      .method-list li { padding: 4px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="/admin.html">
+        <img src="/assets/icon.jpeg" alt="" class="brand-mark">
+        <span><strong>Entfalta</strong><small>System-Check</small></span>
+      </a>
+    </header>
+
+    <main class="admin-main">
+      <article class="panel admin-panel hidden" id="adminPanel">
+        <h1>API Health Check</h1>
+        <p class="muted">Live-Status deiner Server-Verbindungen.</p>
+
+        <div id="healthResults">
+          <div class="check-item">
+            <span class="status-label">Firebase API:</span>
+            <span id="dot-firebase" class="status-dot scanning"></span>
+            <span id="text-firebase" class="status-text">Prüfung läuft...</span>
+          </div>
+          <div class="check-item">
+            <span class="status-label">Stripe API:</span>
+            <span id="dot-stripe" class="status-dot scanning"></span>
+            <span id="text-stripe" class="status-text">Prüfung läuft...</span>
+          </div>
+          <div class="check-item">
+            <span class="status-label">Sendcloud API:</span>
+            <span id="dot-sendcloud" class="status-dot scanning"></span>
+            <span id="text-sendcloud" class="status-text">Prüfung läuft...</span>
+          </div>
+          <div class="check-item">
+            <span class="status-label">E-Mail (SMTP):</span>
+            <span id="smtpStatusDot" class="status-dot scanning"></span>
+            <span id="text-smtp" class="status-text">Prüfung läuft...</span>
+          </div>
+        </div>
+
+        <h2 style="margin-top: 40px;">Sendcloud ID-Retriever</h2>
+        <p class="muted">Wähle einen Anbieter, um die Versand- und Retouren-IDs abzurufen.</p>
+
+        <div class="carrier-grid">
+          <button type="button" class="PrimaryButton" onclick="loadCarrier('dhl')">DHL Germany</button>
+          <button type="button" class="PrimaryButton" onclick="loadCarrier('dpd')">DPD</button>
+          <button type="button" class="PrimaryButton" onclick="loadCarrier('ups')">UPS</button>
+        </div>
+
+        <div id="carrierResults" class="hidden" style="margin-top: 30px;">
+          <h3 id="carrierTitle">Details</h3>
+          <div class="form-two">
+            <div>
+              <strong>Versand-IDs</strong>
+              <div class="method-list"><ul id="shippingList"></ul></div>
+            </div>
+            <div>
+              <strong>Retouren-IDs</strong>
+              <div class="method-list"><ul id="returnList"></ul></div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel" id="adminLoginHint">
+        <h1>Admin-Zugang nötig</h1>
+        <p>Bitte melde dich als Administrator an.</p>
+      </article>
+    </main>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+    <script src="/firebase-config.js"></script>
+    <script src="/app.js"></script>
+    <script>
+        function normalizeCarrierMethodResult(payload = {}) {
+            const getList = (key) => {
+                const value = payload[key];
+                if (Array.isArray(value)) return value;
+                if (Array.isArray(payload.data?.[key])) return payload.data[key];
+                if (Array.isArray(payload.returnMethods) && key === 'returns') return payload.returnMethods;
+                if (Array.isArray(payload.return_methods) && key === 'returns') return payload.return_methods;
+                return [];
+            };
+            return {
+                shipping: getList('shipping').map(item => ({ id: item?.id ?? item?.method_id ?? item?.methodId ?? item?.code ?? '', name: item?.name ?? item?.label ?? item?.title ?? 'Unbenannt', carrier: item?.carrier ?? item?.provider ?? 'Sendcloud' })),
+                returns: getList('returns').map(item => ({ id: item?.id ?? item?.method_id ?? item?.methodId ?? item?.code ?? '', name: item?.name ?? item?.label ?? item?.title ?? 'Unbenannt', carrier: item?.carrier ?? item?.provider ?? 'Sendcloud' }))
+            };
+        }
+
+        function loadCarrier(slug) {
+            const title = document.getElementById('carrierTitle');
+            const results = document.getElementById('carrierResults');
+            const sList = document.getElementById('shippingList');
+            const rList = document.getElementById('returnList');
+
+            title.textContent = slug.toUpperCase() + " IDs werden geladen...";
+            results.classList.remove('hidden');
+            sList.innerHTML = "<li>Lade...</li>";
+            rList.innerHTML = "<li>Lade...</li>";
+
+            postToBackend("get-carrier-methods", { carrier: slug })
+                .then(res => {
+                    const normalized = normalizeCarrierMethodResult(res);
+                    const shipping = normalized.shipping;
+                    const returns = normalized.returns;
+
+                    title.textContent = slug.toUpperCase() + " Methoden";
+                    sList.innerHTML = shipping.length ? shipping.map(m => `<li><strong>${m.id}</strong>: ${m.name}</li>`).join("") : "<li>Keine Versand-Methoden gefunden</li>";
+                    rList.innerHTML = returns.length ? returns.map(m => `<li><strong>${m.id}</strong>: ${m.name}</li>`).join("") : "<li>Keine Retouren-Methoden gefunden. Diese werden oft separat bereitgestellt oder fehlen für den Carrier.</li>";
+
+                    if (shipping.length === 0 && returns.length === 0) {
+                        const availableCarriers = Array.isArray(res.availableCarriers) ? res.availableCarriers.join(', ') : 'nicht verfügbar';
+                        title.innerHTML = `${slug.toUpperCase()} nicht gefunden. <br><small>Verfügbare Codes: ${availableCarriers}</small>`;
+                    }
+                })
+                .catch(err => {
+                    title.textContent = "Fehler: " + err.message;
+                    sList.innerHTML = "<li>Request failed. Ist das Backend online?</li>";
+                    rList.innerHTML = "<li>Check console for details.</li>";
+                });
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            if (typeof runHealthCheck === "function") {
+                runHealthCheck();
+            }
+        });
+    </script>
+  </body>
+</html>
