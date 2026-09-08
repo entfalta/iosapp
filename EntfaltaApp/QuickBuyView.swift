@@ -13,8 +13,8 @@ struct QuickBuyView: View {
                 Text("Buy am Stand").font(EntfaltaTheme.segoe(32, bold: true))
                 Spacer()
                 HStack(spacing: 10) {
-                    Text("Terminal: Verbunden").font(.caption.bold()).padding(.horizontal, 12).padding(.vertical, 6).background(EntfaltaTheme.leaf.opacity(0.3), in: Capsule())
-                    Text("Fake Daten").font(.caption.bold()).padding(.horizontal, 12).padding(.vertical, 6).background(EntfaltaTheme.leaf.opacity(0.3), in: Capsule())
+                    Text("Terminal: Verbunden").font(.caption).bold().padding(.horizontal, 12).padding(.vertical, 6).background(EntfaltaTheme.leaf.opacity(0.3), in: Capsule())
+                    Text("Fake Daten").font(.caption).bold().padding(.horizontal, 12).padding(.vertical, 6).background(EntfaltaTheme.leaf.opacity(0.3), in: Capsule())
                 }
             }
 

@@ -19,7 +19,7 @@ struct GameCard<Preview: View>: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             icon.frame(height: 140).frame(maxWidth: .infinity)
-            Text(title).font(.custom("Segoe Print", size: 22).bold())
+            Text(title).font(EntfaltaTheme.segoe(22, bold: true))
             Text(subtitle).font(.caption).foregroundColor(.secondary)
             Button("Spielen") { }.primaryButtonStyle()
         }.entfaltaCard()

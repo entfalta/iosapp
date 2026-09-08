@@ -60,7 +60,7 @@ struct ProductCard: View {
                         .labelsHidden()
                     Button("Hinzufügen") {
                         state.addToCart(product, format: "print", quantity: quickQuantity, variant: selectedVariantName)
-                    }.font(.caption.bold())
+                    }.font(.caption).bold()
                 }
                 .padding(.top, 4)
             }
@@ -100,7 +100,7 @@ struct ProductDetail: View {
     @State private var selectedVariantName: String?
 
     var body: some View {
-        NavigationStack {
+        NavigationView {
             ScrollView {
                 VStack(alignment: .leading, spacing: 22) {
                     ProductImage(source: product.cover)
@@ -189,7 +189,7 @@ struct CartSheet: View {
     }
 
     var body: some View {
-        NavigationStack {
+        NavigationView {
             VStack(spacing: 0) {
                 List {
                     Section {

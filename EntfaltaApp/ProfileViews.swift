@@ -76,7 +76,7 @@ struct AdminKontoSettings: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 25) {
                 HStack {
-                    Button(action: onBack) { Image(systemName: "chevron.left").bold() }
+                    Button(action: onBack) { Image(systemName: "chevron.left").font(.system(size: 16, weight: .bold)) }
                     Text("Admin-Konto").font(EntfaltaTheme.segoe(32, bold: true))
                 }
 
