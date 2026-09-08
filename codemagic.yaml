@@ -1,7 +1,7 @@
 workflows:
-  ios-unsigned-workflow:
-    name: iOS Unsigned IPA Build
-    max_build_duration: 15
+  ios-dual-build:
+    name: Build fuer echtes iPhone und Simulator
+    max_build_duration: 20
     instance_type: mac_mini_m1
     environment:
       xcode: latest
@@ -9,7 +9,7 @@ workflows:
         XCODE_PROJECT: "EntfaltaApp.xcodeproj"
         XCODE_SCHEME: "EntfaltaApp"
     scripts:
-      - name: Build unsigned App
+      - name: 1. Bauen fuer ECHTES iPhone (Handy)
         script: |
           xcodebuild build \
             -project "$XCODE_PROJECT" \
@@ -18,15 +18,30 @@ workflows:
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO
-      - name: Package into .ipa
-        script: |
+          
+          # Verpacken als echte .ipa
           mkdir -p Payload
-          APP_PATH=$(find $HOME/Library/Developer/Xcode/DerivedData -name "EntfaltaApp.app" -type d | head -n 1)
-          if [ -z "$APP_PATH" ]; then
-            echo "Fehler: .app-Verzeichnis wurde nicht gefunden!"
-            exit 1
-          fi
-          cp -r "$APP_PATH" Payload/
-          zip -r EntfaltaApp_unsigned.ipa Payload
+          APP_PATH_REAL=$(find $HOME/Library/Developer/Xcode/DerivedData -name "EntfaltaApp.app" -path "*/Build/Products/Debug-iphoneos/*" -type d | head -n 1)
+          cp -r "$APP_PATH_REAL" Payload/
+          zip -r fuer_echtes_iPhone.ipa Payload
+          rm -rf Payload
+
+      - name: 2. Bauen fuer ONLINE-SIMULATOR (Web)
+        script: |
+          xcodebuild build \
+            -project "$XCODE_PROJECT" \
+            -scheme "$XCODE_SCHEME" \
+            -sdk iphonesimulator \
+            -configuration Debug \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO
+          
+          # Verpacken als ZIP fuer die Website
+          APP_PATH_SIM=$(find $HOME/Library/Developer/Xcode/DerivedData -name "EntfaltaApp.app" -path "*/Build/Products/Debug-iphonesimulator/*" -type d | head -n 1)
+          cp -r "$APP_PATH_SIM" ./EntfaltaApp.app
+          zip -r fuer_online_simulator.zip EntfaltaApp.app
+          rm -rf EntfaltaApp.app
     artifacts:
-      - "EntfaltaApp_unsigned.ipa"
+      - "fuer_echtes_iPhone.ipa"
+      - "fuer_online_simulator.zip"
