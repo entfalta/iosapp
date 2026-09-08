@@ -35,7 +35,7 @@ jobs:
           cd "$PROJECT_DIR"
 
           xcodebuild -project EntfaltaApp.xcodeproj \
-                     -scheme Entfalta \
+                     -target Entfalta \
                      -configuration Release \
                      -sdk iphoneos \
                      -derivedDataPath build \
