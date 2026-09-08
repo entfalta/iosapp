@@ -282,7 +282,7 @@ struct NewsletterView: View {
                         }
                         Text(post.title).font(EntfaltaTheme.segoe(22, bold: true))
                         Text(post.text).font(EntfaltaTheme.segoe(15))
-                        Text(date(post.createdAtMs)).font(.caption2).foregroundStyle(.secondary)
+                        Text(dateString(post.createdAtMs)).font(.caption2).foregroundStyle(.secondary)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .entfaltaCard()
