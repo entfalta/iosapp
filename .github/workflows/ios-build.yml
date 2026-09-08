@@ -35,7 +35,7 @@ jobs:
           cd "$PROJECT_DIR"
 
           echo "Attempting build for generic iOS device..."
-          xcodebuild -project EntfaltaApp.xcodeproj \
+          xcodebuild build -project EntfaltaApp.xcodeproj \
                      -scheme Entfalta \
                      -configuration Release \
                      -sdk iphoneos \
@@ -49,7 +49,7 @@ jobs:
                      AD_HOC_CODE_SIGNING_ALLOWED=YES || \
           ( \
             echo "Falling back to iOS Simulator build..." && \
-            xcodebuild -project EntfaltaApp.xcodeproj \
+            xcodebuild build -project EntfaltaApp.xcodeproj \
                        -scheme Entfalta \
                        -configuration Release \
                        -sdk iphonesimulator \
