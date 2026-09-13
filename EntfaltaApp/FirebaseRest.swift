@@ -177,6 +177,7 @@ final class FirebaseRest {
         if let value = value as? Bool { return ["booleanValue": value] }
         if let value = value as? Int { return ["integerValue": "\(value)"] }
         if let value = value as? Double { return ["doubleValue": value] }
+        if let value = value as? [String] { return ["arrayValue": ["values": value.map { ["stringValue": $0] }]] }
         if let value = value as? [String: Any] { return ["mapValue": ["fields": encodeFields(value)]] }
         if let value = value as? [[String: Any]] { return ["arrayValue": ["values": value.map { ["mapValue": ["fields": encodeFields($0)]] }]] }
         return ["stringValue": "\(value)"]

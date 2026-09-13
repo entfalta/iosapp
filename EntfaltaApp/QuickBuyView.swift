@@ -37,8 +37,8 @@ struct QuickBuyView: View {
             HStack(spacing: 20) {
                 Text("Zahlung öffnet Stripe Checkout.").font(.caption).foregroundColor(EntfaltaTheme.textMuted)
                 Spacer()
-                Button("Leeren") {}.headerButtonStyle().foregroundColor(.white).background(EntfaltaTheme.leaf.opacity(0.4), in: Capsule())
-                Button("Mit Stripe zahlen") {}.headerButtonStyle().foregroundColor(.white).background(EntfaltaTheme.leaf.opacity(0.6), in: Capsule())
+                Button("Leeren") {}.headerButtonStyle()
+                Button("Mit Stripe zahlen") {}.primaryButtonStyle()
             }
         }
     }
