@@ -427,8 +427,14 @@ struct AdminProductEditView: View {
             "cover": cover.trimmingCharacters(in: .whitespaces),
             "aiGeneratedCover": aiGeneratedCover,
             "pdf": pdfUrl.trimmingCharacters(in: .whitespaces),
-            "updatedAt": [".sv": "timestamp"]
+            "active": true,
+            "updatedAtMs": Date().timeIntervalSince1970 * 1000
         ]
+
+        if existingProduct == nil {
+            values["publishedAtMs"] = Date().timeIntervalSince1970 * 1000
+            values["sold"] = 0
+        }
 
         if itemType == "book" {
             values["isbn"] = isbn.trimmingCharacters(in: .whitespaces)

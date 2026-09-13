@@ -93,18 +93,33 @@ struct AppHeader: View {
             Spacer()
 
             HStack(spacing: 10) {
-                Button(state.navMode == "minimiert" ? "Minimiert" : "Erweitert") {
-                    state.navMode = (state.navMode == "minimiert" ? "erweitert" : "minimiert")
-                }.headerButtonStyle()
+                if state.isAdmin {
+                    Button(state.navMode == "minimiert" ? "Minimiert" : "Erweitert") {
+                        state.navMode = (state.navMode == "minimiert" ? "erweitert" : "minimiert")
+                    }.headerButtonStyle()
 
-                Button("Shop") {
-                    state.adminMode = false
-                    state.selectedSection = "Shop"
-                }.headerButtonStyle()
+                    if state.selectedSection == "Shop" {
+                        Button("Admin") {
+                            state.adminMode = true
+                            state.selectedSection = "Statistiken"
+                        }.headerButtonStyle()
+                    } else {
+                        Button("Shop") {
+                            state.selectedSection = "Shop"
+                        }.headerButtonStyle()
+                    }
+                }
 
-                Button("Buy") {
-                    state.adminMode = true
-                    state.selectedSection = "Buy"
+                Button {
+                    showCart = true
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "cart.fill")
+                        if state.cartCount > 0 {
+                            Text("\(state.cartCount)")
+                                .font(EntfaltaTheme.segoe(12, bold: true))
+                        }
+                    }
                 }.headerButtonStyle()
             }
 

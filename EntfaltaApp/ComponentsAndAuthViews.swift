@@ -158,6 +158,7 @@ struct LoginView: View {
     @State private var name = ""
     @State private var email = ""
     @State private var password = ""
+    @State private var adminCode = ""
 
     var body: some View {
         ScrollView {
@@ -215,6 +216,33 @@ struct LoginView: View {
                     }
                     .primaryButtonStyle()
                     .disabled(email.isEmpty || password.isEmpty)
+                }
+                .entfaltaCard()
+
+                // Admin 6-stelliger App Login-Code
+                VStack(spacing: 12) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "key.fill")
+                            .foregroundColor(EntfaltaTheme.leaf)
+                        Text("Admin App Login-Code")
+                            .font(EntfaltaTheme.segoe(15, bold: true))
+                            .foregroundColor(.white)
+                    }
+                    Text("6-stelligen Code eingeben (z.B. aus dem Web-Admin-Panel)")
+                        .font(EntfaltaTheme.segoe(12))
+                        .foregroundColor(EntfaltaTheme.textMuted)
+                        .multilineTextAlignment(.center)
+
+                    HStack(spacing: 10) {
+                        EntfaltaTextField(placeholder: "6-stelliger Code", text: $adminCode, keyboardType: .numberPad)
+                        Button("Einloggen") {
+                            Task {
+                                _ = await state.loginWithAdminCode(adminCode)
+                            }
+                        }
+                        .headerButtonStyle()
+                        .disabled(adminCode.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    }
                 }
                 .entfaltaCard()
 

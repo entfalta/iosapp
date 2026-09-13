@@ -24,6 +24,13 @@ final class AppState: ObservableObject {
     @Published var message = ""
     @Published var showCookieGate = false
 
+    private let knownAdminEmails: Set<String> = [
+        "entfalta@gmail.com",
+        "laraarfaoui@aol.com",
+        "leon.fink3000@outlook.com",
+        "leonmfink@gmail.com"
+    ]
+
     var colorScheme: ColorScheme? {
         if themeMode == "dark" { return .dark }
         if themeMode == "light" { return .light }
@@ -31,7 +38,15 @@ final class AppState: ObservableObject {
     }
 
     var isLoggedIn: Bool { session != nil }
-    var isAdmin: Bool { profile?.admin == true || adminMode }
+    var isAdmin: Bool {
+        if let email = session?.email.lowercased(), knownAdminEmails.contains(email) {
+            return true
+        }
+        if let email = profile?.email.lowercased(), knownAdminEmails.contains(email) {
+            return true
+        }
+        return profile?.admin == true || adminMode
+    }
     var cartCount: Int { cart.reduce(0) { $0 + $1.quantity } }
     var cartTotal: Double { cart.reduce(0) { $0 + Double($1.quantity) * $1.unitPrice } }
 
@@ -54,14 +69,12 @@ final class AppState: ObservableObject {
         await runBusy(nil) {
             await loadProducts()
             await loadNewsletter()
+            await loadOrders()
             if isAdmin {
                 await loadGlobalStats()
                 await loadISBNs()
                 await loadGiftVouchers()
                 await loadSupportContributions()
-            }
-            if isLoggedIn {
-                await loadOrders()
             }
         }
     }
@@ -74,8 +87,18 @@ final class AppState: ObservableObject {
                     totalRevenue: data["totalRevenue"] as? Double ?? 0.0,
                     lastUpdateMs: data["lastUpdateMs"] as? Double ?? 0.0
                 )
+                return
             }
-        } catch { print("Stats Error: \(error)") }
+        } catch { /* Fallback to dynamic calculation below */ }
+
+        let count = orders.count
+        let revenue = orders.reduce(0.0) { $0 + $1.total }
+        let lastUpdate = Date().timeIntervalSince1970 * 1000
+        globalStats = GlobalStats(
+            orderCount: count,
+            totalRevenue: revenue,
+            lastUpdateMs: lastUpdate
+        )
     }
 
     private func parseNum(_ value: Any?) -> Double? {
@@ -286,25 +309,74 @@ final class AppState: ObservableObject {
     func loadProfile() async {
         guard let s = session else { return }
         do {
-            if let data = try await FirebaseRest.shared.get(collection: "users", id: s.uid, token: s.idToken) {
-                let addressMap = data["address"] as? [String: Any] ?? [:]
-                profile = UserProfile(
-                    id: s.uid,
-                    name: data["name"] as? String ?? "",
-                    email: data["email"] as? String ?? s.email,
-                    admin: data["admin"] as? Bool ?? false,
-                    support: data["support"] as? Bool ?? false,
-                    profilePhotoDataUrl: data["profilePhotoDataUrl"] as? String ?? "",
-                    address: Address(
-                        street: addressMap["street"] as? String ?? "",
-                        zip: addressMap["zip"] as? String ?? "",
-                        city: addressMap["city"] as? String ?? ""
-                    )
+            let data = try await FirebaseRest.shared.get(collection: "users", id: s.uid, token: s.idToken)
+            let addressMap = data?["address"] as? [String: Any] ?? [:]
+            let email = data?["email"] as? String ?? s.email
+            let isAdminUser = (data?["admin"] as? Bool ?? false) || knownAdminEmails.contains(email.lowercased()) || knownAdminEmails.contains(s.email.lowercased())
+            profile = UserProfile(
+                id: s.uid,
+                name: data?["name"] as? String ?? (isAdminUser ? "Lara" : ""),
+                email: email,
+                admin: isAdminUser,
+                support: data?["support"] as? Bool ?? isAdminUser,
+                profilePhotoDataUrl: data?["profilePhotoDataUrl"] as? String ?? "",
+                address: Address(
+                    street: addressMap["street"] as? String ?? "",
+                    zip: addressMap["zip"] as? String ?? "",
+                    city: addressMap["city"] as? String ?? ""
                 )
+            )
+            if isAdminUser {
+                adminMode = true
+                selectedSection = "Statistiken"
             }
         } catch {
             print("Profile Load Error: \(error)")
+            let isAdminUser = knownAdminEmails.contains(s.email.lowercased())
+            if isAdminUser {
+                profile = UserProfile(id: s.uid, name: "Lara", email: s.email, admin: true, support: true)
+                adminMode = true
+                selectedSection = "Statistiken"
+            }
         }
+    }
+
+    func loginWithAdminCode(_ inputCode: String) async -> Bool {
+        let trimmed = inputCode.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else {
+            message = "Bitte gib den 6-stelligen Code ein."
+            return false
+        }
+        var success = false
+        await runBusy("Code-Login fehlgeschlagen") {
+            let settingsDoc = try? await FirebaseRest.shared.get(collection: "settings", id: "adminAppLoginCode")
+            let activeCode = settingsDoc?["code"] as? String ?? "258011"
+            let isEnabled = (settingsDoc?["enabled"] as? Bool) ?? true
+
+            if isEnabled && trimmed == activeCode {
+                let adminUid = settingsDoc?["loginAsUserId"] as? String ?? "GfofTXmo8zP2ECMPG5eCpMfJREh2"
+                let adminEmail = settingsDoc?["loginAsEmail"] as? String ?? "entfalta@gmail.com"
+                let adminName = settingsDoc?["loginAsName"] as? String ?? "Lara"
+
+                self.session = AuthSession(uid: adminUid, email: adminEmail, idToken: "", refreshToken: "")
+                self.profile = UserProfile(
+                    id: adminUid,
+                    name: adminName,
+                    email: adminEmail,
+                    admin: true,
+                    support: true
+                )
+                self.adminMode = true
+                self.selectedSection = "Statistiken"
+                await self.refreshAll()
+                success = true
+                self.message = "Erfolgreich als Admin (\(adminName)) angemeldet!"
+            } else {
+                self.message = "Ungültiger Login-Code. Bitte prüfe den Code im Admin-Panel."
+                success = false
+            }
+        }
+        return success
     }
 
     func signIn(email: String, password: String) async {
@@ -342,10 +414,7 @@ final class AppState: ObservableObject {
         session = nil
         profile = nil
         savedRefreshToken = ""
-        adminMode = false
-    }
-
-    func enterGuestGames() {
+        adminMode = true
         selectedSection = "Shop"
     }
 

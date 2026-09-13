@@ -20,7 +20,11 @@ struct StatisticsView: View {
                 statTile(label: "Live Web", value: "0", hint: "gerade auf der Webseite")
             }
 
-            Text("Archiv: \(state.orders.filter{$0.archived}.count) | Artikel: \(state.products.count) | Verkauft gesamt: 0 | Download/Print: 0/0")
+            let totalSold = state.products.reduce(0) { $0 + $1.sold }
+            let downloadCount = state.products.filter { $0.downloadAvailable == true }.count
+            let printCount = state.products.filter { $0.printAvailable == true }.count
+
+            Text("Archiv: \(state.orders.filter{$0.archived}.count) | Artikel: \(state.products.count) | Verkauft gesamt: \(totalSold) | Download/Print: \(downloadCount)/\(printCount)")
                 .font(EntfaltaTheme.segoe(13))
                 .foregroundColor(EntfaltaTheme.textMuted)
                 .frame(maxWidth: .infinity, alignment: .center)
@@ -28,12 +32,22 @@ struct StatisticsView: View {
             VStack(alignment: .leading, spacing: 15) {
                 Text("Meistverkauft").font(EntfaltaTheme.segoe(18, bold: true))
                 HStack(spacing: 15) {
-                    RoundedRectangle(cornerRadius: 15).fill(EntfaltaTheme.leaf.opacity(0.2))
-                        .frame(width: 80, height: 100)
-                        .overlay(Text("Entfalta").font(.caption2).foregroundColor(EntfaltaTheme.leaf))
-                    VStack(alignment: .leading) {
-                        Text("Titel: Noch nichts verkauft").bold()
-                        Text("Verkauft: 0").font(.caption)
+                    if let top = state.products.sorted(by: { $0.sold > $1.sold }).first {
+                        ProductImage(source: top.cover)
+                            .frame(width: 80, height: 100)
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(top.title).font(EntfaltaTheme.segoe(16, bold: true)).foregroundColor(.white)
+                            Text("Verkauft: \(top.sold)x").font(.caption).foregroundColor(EntfaltaTheme.leaf)
+                            Text("Preis: \(money(top.price))").font(.caption).foregroundColor(EntfaltaTheme.textMuted)
+                        }
+                    } else {
+                        RoundedRectangle(cornerRadius: 15).fill(EntfaltaTheme.leaf.opacity(0.2))
+                            .frame(width: 80, height: 100)
+                            .overlay(Text("Entfalta").font(.caption2).foregroundColor(EntfaltaTheme.leaf))
+                        VStack(alignment: .leading) {
+                            Text("Titel: Noch nichts verkauft").bold()
+                            Text("Verkauft: 0").font(.caption)
+                        }
                     }
                 }.entfaltaCard(padding: 15)
             }
