@@ -71,9 +71,6 @@ struct AdminKontoSettings: View {
     @State private var street = "Albert-Einstein-Straße 47 (c/o Autorenglück #10335)"
     @State private var zip = "02977"
     @State private var city = "Hoyerswerda"
-    @State private var street = "Albert-Einstein-Straße 47 (c/o Autorenglück #10335)"
-    @State private var zip = "02977"
-    @State private var city = "Hoyerswerda"
 
     var body: some View {
         ScrollView {

@@ -361,7 +361,8 @@ struct AdminProductEditView: View {
                         List(state.isbns) { item in
                             Button {
                                 selectedIsbn.wrappedValue = item.isbn
-                                dismiss()
+                                showIsbnPickerPrint = false
+                                showIsbnPickerEbook = false
                             } label: {
                                 HStack {
                                     VStack(alignment: .leading, spacing: 4) {
