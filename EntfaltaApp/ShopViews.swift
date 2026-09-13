@@ -3,20 +3,89 @@ import SwiftUI
 struct ShopView: View {
     @EnvironmentObject private var state: AppState
     @State private var selected: Product?
+    @State private var selectedCategory = "Alle"
+    @State private var searchText = ""
+
+    var categories: [String] {
+        var set = ["Alle", "Aufklärung", "Alltagshelfer", "Lernhelfer", "Sonstige"]
+        for p in state.products {
+            if !p.category.isEmpty && !set.contains(p.category) {
+                set.append(p.category)
+            }
+        }
+        return set
+    }
+
+    var filteredProducts: [Product] {
+        state.products.filter { product in
+            let matchesCat = (selectedCategory == "Alle") || (product.category.lowercased() == selectedCategory.lowercased())
+            let query = searchText.trimmingCharacters(in: .whitespaces).lowercased()
+            let matchesSearch = query.isEmpty || product.title.lowercased().contains(query) || product.description.lowercased().contains(query)
+            return matchesCat && matchesSearch
+        }
+    }
 
     var body: some View {
-        ScrollView {
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 200), spacing: 16)], spacing: 16) {
-                ForEach(state.products) { product in
-                    Button { selected = product } label: {
-                        ProductCard(product: product)
+        VStack(spacing: 16) {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 12) {
+                    ForEach(categories, id: \.self) { cat in
+                        Button(cat) {
+                            selectedCategory = cat
+                        }
+                        .font(EntfaltaTheme.segoe(14, bold: selectedCategory == cat))
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                        .background(selectedCategory == cat ? EntfaltaTheme.leaf.opacity(0.3) : Color.white.opacity(0.08), in: Capsule())
+                        .overlay(Capsule().stroke(selectedCategory == cat ? EntfaltaTheme.leaf : Color.white.opacity(0.15), lineWidth: 1))
+                        .foregroundColor(selectedCategory == cat ? EntfaltaTheme.leaf : .white)
                     }
-                    .buttonStyle(.plain)
+                }
+                .padding(.horizontal, 16)
+            }
+
+            HStack {
+                Image(systemName: "magnifyingglass").foregroundColor(EntfaltaTheme.textMuted)
+                TextField("Produkte suchen...", text: $searchText)
+                    .font(EntfaltaTheme.segoe(14))
+                if !searchText.isEmpty {
+                    Button(action: { searchText = "" }) {
+                        Image(systemName: "xmark.circle.fill").foregroundColor(EntfaltaTheme.textMuted)
+                    }
                 }
             }
-            .padding()
+            .padding(.horizontal, 16)
+            .padding(.vertical, 10)
+            .background(EntfaltaTheme.forestGreen.opacity(0.4))
+            .clipShape(Capsule())
+            .overlay(Capsule().stroke(EntfaltaTheme.cardBorder, lineWidth: 1))
+            .padding(.horizontal, 16)
+
+            ScrollView {
+                if filteredProducts.isEmpty {
+                    VStack(spacing: 10) {
+                        Text("Keine passenden Artikel gefunden")
+                            .font(EntfaltaTheme.segoe(18, bold: true))
+                        Text("Wähle eine andere Kategorie oder ändere deine Suche.")
+                            .font(EntfaltaTheme.segoe(14))
+                            .foregroundColor(EntfaltaTheme.textMuted)
+                    }
+                    .padding(40)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                } else {
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 200), spacing: 16)], spacing: 16) {
+                        ForEach(filteredProducts) { product in
+                            Button { selected = product } label: {
+                                ProductCard(product: product)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                    .padding(.horizontal, 16)
+                }
+            }
+            .refreshable { await state.refreshAll() }
         }
-        .refreshable { await state.refreshAll() }
         .sheet(item: $selected) { ProductDetail(product: $0) }
     }
 }
@@ -32,7 +101,10 @@ struct ProductCard: View {
             ProductImage(source: product.cover)
                 .frame(height: 160)
                 .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-                .rotationEffect(.degrees(Double.random(in: -2...2)))
+
+            if product.aiGeneratedCover == true {
+                AiContentBadge()
+            }
 
             Text(product.title).font(EntfaltaTheme.segoe(18, bold: true)).lineLimit(2)
             Text(product.description).font(.system(size: 12)).foregroundColor(.secondary).lineLimit(2)
@@ -58,9 +130,11 @@ struct ProductCard: View {
                 HStack {
                     Stepper("", value: $quickQuantity, in: 1...max(1, product.stock))
                         .labelsHidden()
-                    Button("Hinzufügen") {
+                    Button(action: {
                         state.addToCart(product, format: "print", quantity: quickQuantity, variant: selectedVariantName)
-                    }.font(.caption).bold()
+                    }) {
+                        Text("Hinzufügen").font(.caption).bold()
+                    }
                 }
                 .padding(.top, 4)
             }
@@ -107,12 +181,15 @@ struct ProductDetail: View {
                         .frame(maxHeight: 350)
                         .clipShape(RoundedRectangle(cornerRadius: 25, style: .continuous))
                         .shadow(color: .black.opacity(0.1), radius: 20)
-                        .padding(.bottom, 10)
+
+                    if product.aiGeneratedCover == true {
+                        AiContentBadge()
+                    }
 
                     Text(product.title).font(EntfaltaTheme.segoe(32, bold: true))
 
                     if let isbn = product.isbn {
-                        Text("ISBN: \(isbn)").font(.caption.monospaced()).foregroundColor(.secondary)
+                        Text("ISBN: \(isbn)").font(.system(.caption, design: .monospaced)).foregroundColor(.secondary)
                     }
 
                     Text(product.description).font(EntfaltaTheme.segoe(16))

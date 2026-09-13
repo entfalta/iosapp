@@ -3,14 +3,13 @@ import UIKit
 import CoreText
 
 enum EntfaltaTheme {
-    // Exact colors from Android screenshots
     static let forestGreen = Color(red: 0.09, green: 0.11, blue: 0.08) // #171b14
     static let leaf = Color(red: 0.25, green: 0.44, blue: 0.27)      // #3f6f45
     static let clay = Color(red: 0.54, green: 0.34, blue: 0.22)      // #8a5637
     static let brown = Color(red: 0.35, green: 0.22, blue: 0.15)     // #593826
-    static let cardBg = Color.white.opacity(0.04)
-    static let cardBorder = Color.white.opacity(0.12)
-    static let textMuted = Color.white.opacity(0.6)
+    static let cardBg = Color.white.opacity(0.06)
+    static let cardBorder = Color.white.opacity(0.18)
+    static let textMuted = Color.white.opacity(0.65)
 
     static func registerFonts() {
         guard let url = Bundle.main.url(forResource: "segoepr", withExtension: "ttf"),
@@ -26,7 +25,15 @@ enum EntfaltaTheme {
     }
 
     static var buttonGradient: LinearGradient {
-        LinearGradient(colors: [leaf.opacity(0.9), clay.opacity(0.9)], startPoint: .leading, endPoint: .trailing)
+        LinearGradient(colors: [leaf.opacity(0.95), clay.opacity(0.90)], startPoint: .leading, endPoint: .trailing)
+    }
+
+    static var glassBorderGradient: LinearGradient {
+        LinearGradient(
+            colors: [Color.white.opacity(0.35), Color.white.opacity(0.08)],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
     }
 }
 
@@ -46,18 +53,38 @@ extension View {
     func entfaltaCard(padding: CGFloat = 20) -> some View {
         self
             .padding(padding)
-            .background(EntfaltaTheme.cardBg)
-            .clipShape(RoundedRectangle(cornerRadius: 25, style: .continuous))
-            .overlay(RoundedRectangle(cornerRadius: 25, style: .continuous).stroke(EntfaltaTheme.cardBorder, lineWidth: 1))
+            .background(
+                RoundedRectangle(cornerRadius: 24, style: .continuous)
+                    .fill(.ultraThinMaterial)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 24, style: .continuous)
+                            .fill(EntfaltaTheme.cardBg)
+                    )
+            )
+            .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 24, style: .continuous)
+                    .stroke(EntfaltaTheme.glassBorderGradient, lineWidth: 1.2)
+            )
+            .shadow(color: Color.black.opacity(0.25), radius: 12, x: 0, y: 6)
+    }
+
+    func entfaltaCenteredCard(maxWidth: CGFloat = 520, padding: CGFloat = 20) -> some View {
+        self
+            .entfaltaCard(padding: padding)
+            .frame(maxWidth: maxWidth)
+            .frame(maxWidth: .infinity, alignment: .center)
     }
 
     func primaryButtonStyle() -> some View {
         self
             .font(EntfaltaTheme.segoe(16, bold: true))
             .foregroundColor(.white)
-            .padding(.horizontal, 22)
-            .padding(.vertical, 12)
+            .padding(.horizontal, 24)
+            .padding(.vertical, 14)
             .background(EntfaltaTheme.buttonGradient, in: Capsule())
+            .overlay(Capsule().stroke(EntfaltaTheme.glassBorderGradient, lineWidth: 1))
+            .shadow(color: EntfaltaTheme.leaf.opacity(0.3), radius: 8, x: 0, y: 4)
     }
 }
 
@@ -80,8 +107,12 @@ struct EntfaltaTextField: View {
         .font(EntfaltaTheme.segoe(15))
         .padding(.horizontal, 20)
         .padding(.vertical, 14)
-        .background(EntfaltaTheme.forestGreen.opacity(0.5))
+        .background(
+            Capsule()
+                .fill(.thinMaterial)
+                .overlay(Capsule().fill(EntfaltaTheme.forestGreen.opacity(0.4)))
+        )
         .clipShape(Capsule())
-        .overlay(Capsule().stroke(EntfaltaTheme.cardBorder, lineWidth: 1))
+        .overlay(Capsule().stroke(EntfaltaTheme.glassBorderGradient, lineWidth: 1))
     }
 }

@@ -29,10 +29,19 @@ struct Product: Identifiable, Codable, Hashable {
     var priceEbook: Double?
     var isbn: String?
     var isbnEbook: String?
+    var noIsbnBook: Bool?
     var stock: Int
     var sold: Int
     var active: Bool
     var publishedAtMs: Double
+    var releaseDateMs: Double?
+    var releaseDateStr: String?
+    var lowStockEnabled: Bool?
+    var lowStockLimit: Int?
+    var pdfUrl: String?
+    var aiGeneratedCover: Bool?
+    var downloadAvailable: Bool?
+    var printAvailable: Bool?
     var previewPages: [String]?
     var productImages: [String]?
     var isGift: Bool?

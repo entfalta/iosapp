@@ -68,9 +68,12 @@ struct AdminKontoSettings: View {
     let onBack: () -> Void
     @State private var name = "Lara"
     @State private var email = "entfalta@gmail.com"
-    @State private var street = "Richard-Wagner-Straße 10s"
-    @State private var zip = "23556"
-    @State private var city = "Lübeck"
+    @State private var street = "Albert-Einstein-Straße 47 (c/o Autorenglück #10335)"
+    @State private var zip = "02977"
+    @State private var city = "Hoyerswerda"
+    @State private var street = "Albert-Einstein-Straße 47 (c/o Autorenglück #10335)"
+    @State private var zip = "02977"
+    @State private var city = "Hoyerswerda"
 
     var body: some View {
         ScrollView {

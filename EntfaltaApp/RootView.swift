@@ -35,14 +35,13 @@ struct RootView: View {
     }
 
     @ViewBuilder private var content: some View {
-        if !state.isLoggedIn && state.selectedSection != "Spiele" {
+        if !state.isLoggedIn {
             LoginView()
         } else {
             ScrollView {
                 VStack(spacing: 20) {
                     switch state.selectedSection {
                     case "Shop": ShopView()
-                    case "Spiele": GamesHomeView()
                     case "Merkliste": WishlistView()
                     case "Meine Käufe": MyPurchasesView()
                     case "Offline E-Books": OfflineEbooksView()
@@ -124,10 +123,15 @@ extension View {
         self
             .font(EntfaltaTheme.segoe(14, bold: true))
             .padding(.horizontal, 16)
-            .padding(.vertical, 8)
-            .background(Color.white.opacity(0.1), in: Capsule())
-            .overlay(Capsule().stroke(Color.white.opacity(0.2), lineWidth: 1))
+            .padding(.vertical, 9)
+            .background(
+                Capsule()
+                    .fill(.thinMaterial)
+                    .overlay(Capsule().fill(Color.white.opacity(0.08)))
+            )
+            .overlay(Capsule().stroke(EntfaltaTheme.glassBorderGradient, lineWidth: 1))
             .foregroundColor(.white)
+            .shadow(color: Color.black.opacity(0.15), radius: 4, x: 0, y: 2)
     }
 }
 
@@ -144,48 +148,74 @@ struct AdminNavBar: View {
         VStack(spacing: 12) {
             ForEach(0..<(state.navMode == "erweitert" ? rows.count : 1), id: \.self) { rowIndex in
                 ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 25) {
+                    HStack(spacing: 22) {
                         ForEach(rows[rowIndex], id: \.self) { title in
                             Button(title) { state.selectedSection = title }
                                 .font(EntfaltaTheme.segoe(14, bold: state.selectedSection == title))
-                                .foregroundColor(state.selectedSection == title ? EntfaltaTheme.leaf : .white)
-                                .overlay(alignment: .bottom) {
-                                    if state.selectedSection == title {
-                                        Rectangle().fill(EntfaltaTheme.leaf).frame(height: 1).offset(y: 4)
-                                    }
-                                }
+                                .padding(.horizontal, 14)
+                                .padding(.vertical, 8)
+                                .background(
+                                    state.selectedSection == title
+                                    ? EntfaltaTheme.leaf.opacity(0.35)
+                                    : Color.clear,
+                                    in: Capsule()
+                                )
+                                .overlay(
+                                    Capsule().stroke(
+                                        state.selectedSection == title ? EntfaltaTheme.glassBorderGradient : LinearGradient(colors: [.clear], startPoint: .top, endPoint: .bottom),
+                                        lineWidth: 1
+                                    )
+                                )
+                                .foregroundColor(state.selectedSection == title ? .white : EntfaltaTheme.textMuted)
                         }
                     }
-                    .padding(.horizontal, 25)
+                    .padding(.horizontal, 20)
                 }
             }
         }
-        .padding(.vertical, 18)
-        .background(Color.white.opacity(0.03))
-        .clipShape(RoundedRectangle(cornerRadius: 30, style: .continuous))
-        .overlay(RoundedRectangle(cornerRadius: 30, style: .continuous).stroke(Color.white.opacity(0.1), lineWidth: 1))
-        .padding(.horizontal, 20)
+        .padding(.vertical, 14)
+        .background(
+            RoundedRectangle(cornerRadius: 26, style: .continuous)
+                .fill(.ultraThinMaterial)
+                .overlay(RoundedRectangle(cornerRadius: 26, style: .continuous).fill(Color.white.opacity(0.04)))
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 26, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: 26, style: .continuous).stroke(EntfaltaTheme.glassBorderGradient, lineWidth: 1.2))
+        .padding(.horizontal, 16)
     }
 }
 
 struct CustomerNavBar: View {
     @EnvironmentObject private var state: AppState
-    let sections = ["Shop", "Gutscheine", "Newsletter", "Merkliste", "Meine Käufe", "Spiele", "Offline E-Books"]
+    let sections = ["Shop", "Gutscheine", "Newsletter", "Merkliste", "Meine Käufe", "Offline E-Books"]
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 25) {
+            HStack(spacing: 22) {
                 ForEach(sections, id: \.self) { title in
                     Button(title) { state.selectedSection = title }
                         .font(EntfaltaTheme.segoe(14, bold: state.selectedSection == title))
-                        .foregroundColor(state.selectedSection == title ? EntfaltaTheme.leaf : .white)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                        .background(
+                            state.selectedSection == title
+                            ? EntfaltaTheme.leaf.opacity(0.35)
+                            : Color.clear,
+                            in: Capsule()
+                        )
+                        .foregroundColor(state.selectedSection == title ? .white : EntfaltaTheme.textMuted)
                 }
             }
-            .padding(.horizontal, 25)
+            .padding(.horizontal, 20)
         }
-        .padding(.vertical, 18)
-        .background(Color.white.opacity(0.03))
+        .padding(.vertical, 14)
+        .background(
+            Capsule()
+                .fill(.ultraThinMaterial)
+                .overlay(Capsule().fill(Color.white.opacity(0.04)))
+        )
         .clipShape(Capsule())
-        .padding(.horizontal, 20)
+        .overlay(Capsule().stroke(EntfaltaTheme.glassBorderGradient, lineWidth: 1.2))
+        .padding(.horizontal, 16)
     }
 }

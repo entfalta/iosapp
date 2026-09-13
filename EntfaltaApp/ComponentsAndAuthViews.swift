@@ -174,6 +174,29 @@ struct LoginView: View {
                 }
 
                 VStack(spacing: 15) {
+                    Button {
+                        Task {
+                            await state.signInWithGoogle(email: email.isEmpty ? nil : email)
+                        }
+                    } label: {
+                        HStack(spacing: 10) {
+                            Text("G").font(.system(size: 20, weight: .bold)).foregroundColor(.red)
+                            Text("Mit Google anmelden")
+                                .font(EntfaltaTheme.segoe(15, bold: true))
+                                .foregroundColor(.white)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
+                        .background(Color.white.opacity(0.1), in: Capsule())
+                        .overlay(Capsule().stroke(EntfaltaTheme.cardBorder, lineWidth: 1))
+                    }
+
+                    HStack {
+                        Rectangle().fill(Color.white.opacity(0.1)).frame(height: 1)
+                        Text("oder").font(.caption).foregroundColor(EntfaltaTheme.textMuted)
+                        Rectangle().fill(Color.white.opacity(0.1)).frame(height: 1)
+                    }
+
                     if isRegister {
                         EntfaltaTextField(placeholder: "Vollständiger Name", text: $name)
                     }
@@ -196,19 +219,13 @@ struct LoginView: View {
                 .entfaltaCard()
 
                 HStack {
+                    Spacer()
                     Button(isRegister ? "Schon ein Konto? Anmelden" : "Noch kein Konto? Registrieren") {
                         withAnimation { isRegister.toggle() }
                     }
-                    .font(EntfaltaTheme.segoe(13))
+                    .font(EntfaltaTheme.segoe(14, bold: true))
                     .foregroundColor(EntfaltaTheme.leaf)
-
                     Spacer()
-
-                    Button("Als Gast spielen") {
-                        state.enterGuestGames()
-                    }
-                    .font(EntfaltaTheme.segoe(13))
-                    .foregroundColor(EntfaltaTheme.textMuted)
                 }
                 .padding(.horizontal, 10)
             }
@@ -306,6 +323,36 @@ struct OfflineEbooksView: View {
             Text("Keine Offline-E-Books vorhanden.")
                 .padding()
                 .frame(maxWidth: .infinity, alignment: .center)
+        }
+    }
+}
+
+struct AiContentBadge: View {
+    @State private var showAlert = false
+
+    var body: some View {
+        Button {
+            showAlert = true
+        } label: {
+            HStack(spacing: 5) {
+                Text("Enthält KI-generierte Inhalte")
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundColor(EntfaltaTheme.textMuted)
+
+                Image(systemName: "info.circle")
+                    .font(.system(size: 12, weight: .bold))
+                    .foregroundColor(EntfaltaTheme.leaf)
+            }
+            .padding(.horizontal, 9)
+            .padding(.vertical, 4)
+            .background(Color.white.opacity(0.06), in: Capsule())
+            .overlay(Capsule().stroke(EntfaltaTheme.glassBorderGradient, lineWidth: 1))
+        }
+        .buttonStyle(.plain)
+        .alert("KI-generierte Inhalte", isPresented: $showAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text("Der Hintergrund ist KI-generiert, aber das Produkt ist real.")
         }
     }
 }

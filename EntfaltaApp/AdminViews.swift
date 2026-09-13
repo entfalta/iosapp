@@ -273,30 +273,98 @@ struct AdminProductsView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 25) {
             HStack {
-                Text("Bücher & Produkte").font(EntfaltaTheme.segoe(32, bold: true))
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Bücher & Produkte").font(EntfaltaTheme.segoe(32, bold: true))
+                    Text("\(state.products.count) Artikel im Shop").font(EntfaltaTheme.segoe(13)).foregroundColor(EntfaltaTheme.textMuted)
+                }
                 Spacer()
-                Button("Neu") {
+                Button("+ Neuer Artikel") {
                     selectedProduct = nil
                     showingEdit = true
-                }.headerButtonStyle()
+                }.primaryButtonStyle()
             }
 
-            VStack(spacing: 12) {
+            VStack(spacing: 14) {
                 if state.products.isEmpty {
-                    Text("Noch keine Artikel vorhanden.").padding().frame(maxWidth: .infinity, alignment: .center)
+                    Text("Noch keine Artikel vorhanden. Klicke oben auf '+ Neuer Artikel'.")
+                        .font(EntfaltaTheme.segoe(14))
+                        .foregroundColor(EntfaltaTheme.textMuted)
+                        .padding(30)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        .entfaltaCard()
                 } else {
                     ForEach(state.products) { product in
-                        HStack {
-                            VStack(alignment: .leading) {
-                                Text(product.title).bold()
-                                Text(money(product.price)).font(.caption).foregroundColor(EntfaltaTheme.leaf)
+                        HStack(spacing: 16) {
+                            // Cover Preview
+                            ProductImage(source: product.cover)
+                                .frame(width: 55, height: 75)
+                                .clipShape(RoundedRectangle(cornerRadius: 12))
+                                .overlay(RoundedRectangle(cornerRadius: 12).stroke(EntfaltaTheme.glassBorderGradient, lineWidth: 1))
+
+                            VStack(alignment: .leading, spacing: 6) {
+                                HStack(spacing: 8) {
+                                    Text(product.title)
+                                        .font(EntfaltaTheme.segoe(16, bold: true))
+                                        .foregroundColor(.white)
+
+                                    if product.noIsbnBook == true {
+                                        Text("Ohne Buchpreisbindung")
+                                            .font(.system(size: 9, weight: .bold))
+                                            .padding(.horizontal, 6)
+                                            .padding(.vertical, 3)
+                                            .background(EntfaltaTheme.leaf.opacity(0.4), in: Capsule())
+                                            .foregroundColor(.white)
+                                    }
+                                }
+
+                                HStack(spacing: 12) {
+                                    Text(product.itemType == "book" ? "Buch" : (product.itemType == "worksheet" ? "Arbeitsblatt" : "Produkt"))
+                                        .font(.system(size: 11, weight: .semibold))
+                                        .foregroundColor(EntfaltaTheme.textMuted)
+
+                                    Text("•")
+                                        .font(.caption)
+                                        .foregroundColor(EntfaltaTheme.textMuted)
+
+                                    Text("Lager: \(product.stock) Stk.")
+                                        .font(.system(size: 11, weight: .semibold))
+                                        .foregroundColor(product.stock > 5 ? .green : (product.stock > 0 ? .orange : .red))
+                                }
+
+                                HStack(spacing: 12) {
+                                    if product.downloadPrice > 0 {
+                                        Text("DL: \(money(product.downloadPrice))")
+                                            .font(EntfaltaTheme.segoe(12, bold: true))
+                                            .foregroundColor(EntfaltaTheme.clay)
+                                    }
+                                    if product.printPrice > 0 {
+                                        Text("Print: \(money(product.printPrice))")
+                                            .font(EntfaltaTheme.segoe(12, bold: true))
+                                            .foregroundColor(EntfaltaTheme.leaf)
+                                    }
+                                    if product.downloadPrice == 0 && product.printPrice == 0 {
+                                        Text(money(product.price))
+                                            .font(EntfaltaTheme.segoe(12, bold: true))
+                                            .foregroundColor(EntfaltaTheme.leaf)
+                                    }
+                                }
                             }
+
                             Spacer()
-                            Button("Edit") {
+
+                            Button {
                                 selectedProduct = product
                                 showingEdit = true
-                            }.font(.caption).padding(6).background(Color.white.opacity(0.1), in: RoundedRectangle(cornerRadius: 8))
-                        }.entfaltaCard(padding: 12)
+                            } label: {
+                                Image(systemName: "pencil")
+                                    .font(.system(size: 14, weight: .bold))
+                                    .padding(10)
+                                    .background(Color.white.opacity(0.1), in: Circle())
+                                    .overlay(Circle().stroke(EntfaltaTheme.glassBorderGradient, lineWidth: 1))
+                                    .foregroundColor(.white)
+                            }
+                        }
+                        .entfaltaCard(padding: 14)
                     }
                 }
             }
