@@ -14,7 +14,6 @@
     100000000000000000000106 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000006 /* RootView.swift */; };
     100000000000000000000107 /* ShopViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000007 /* ShopViews.swift */; };
     100000000000000000000108 /* AdminViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000008 /* AdminViews.swift */; };
-    100000000000000000000109 /* GamesViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000009 /* GamesViews.swift */; };
     100000000000000000000110 /* ProfileViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000010 /* ProfileViews.swift */; };
     100000000000000000000114 /* ComponentsAndAuthViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000016 /* ComponentsAndAuthViews.swift */; };
     100000000000000000000115 /* AdminOrdersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000017 /* AdminOrdersView.swift */; };
@@ -35,7 +34,6 @@
     100000000000000000000006 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
     100000000000000000000007 /* ShopViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopViews.swift; sourceTree = "<group>"; };
     100000000000000000000008 /* AdminViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdminViews.swift; sourceTree = "<group>"; };
-    100000000000000000000009 /* GamesViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GamesViews.swift; sourceTree = "<group>"; };
     100000000000000000000010 /* ProfileViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViews.swift; sourceTree = "<group>"; };
     100000000000000000000016 /* ComponentsAndAuthViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComponentsAndAuthViews.swift; sourceTree = "<group>"; };
     100000000000000000000017 /* AdminOrdersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdminOrdersView.swift; sourceTree = "<group>"; };
@@ -73,7 +71,6 @@
         100000000000000000000006 /* RootView.swift */,
         100000000000000000000007 /* ShopViews.swift */,
         100000000000000000000008 /* AdminViews.swift */,
-        100000000000000000000009 /* GamesViews.swift */,
         100000000000000000000010 /* ProfileViews.swift */,
         100000000000000000000016 /* ComponentsAndAuthViews.swift */,
         100000000000000000000017 /* AdminOrdersView.swift */,
@@ -164,7 +161,6 @@
         100000000000000000000106 /* RootView.swift in Sources */,
         100000000000000000000107 /* ShopViews.swift in Sources */,
         100000000000000000000108 /* AdminViews.swift in Sources */,
-        100000000000000000000109 /* GamesViews.swift in Sources */,
         100000000000000000000110 /* ProfileViews.swift in Sources */,
         100000000000000000000114 /* ComponentsAndAuthViews.swift in Sources */,
         100000000000000000000115 /* AdminOrdersView.swift in Sources */,
